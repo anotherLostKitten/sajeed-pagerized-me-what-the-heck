@@ -16,11 +16,13 @@ if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((672, 672))
     screen.fill((0,0,0))
-    clock = pygame.time.Clock() 
+    clock = pygame.time.Clock()
     playin=True
     while playin:
         pygame.display.flip()
         clock.tick(15)
+        UI = UserInterface()
+        UI.draw()
         for e in pygame.event.get():
             if e.type == pygame.locals.QUIT:
                 playin = False
