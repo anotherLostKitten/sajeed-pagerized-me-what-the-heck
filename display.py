@@ -4,6 +4,7 @@ import pygame
 import pygame.locals
 
 from matrix import Etrx
+from interface import UserInterface
 
 movs=(pygame.K_ESCAPE, pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d, pygame.K_UP, pygame.K_LEFT, pygame.K_DOWN, pygame.K_RIGHT, pygame.K_SPACE, pygame.K_q)
 
@@ -70,15 +71,17 @@ if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((672, 672))
     screen.fill((0,0,0))
-    clock = pygame.time.Clock() 
+    clock = pygame.time.Clock()
     playin=True
     ry=0
     rx=0
     m1 = False
+    UI = UserInterface()
     while playin:
         screen.fill((0,0,0))
         render_axes(screen,axis,ry,rx)
         render_arrows(screen,axia,ry,rx)
+        UI.draw(screen)
         pygame.display.flip()
         clock.tick(15)
         for e in pygame.event.get():
