@@ -31,11 +31,11 @@ if __name__ == '__main__':
     ry=0
     rx=0
     m1 = False
-    UI = UserInterface()
+    UI = UserInterface(screen)
     while playin:
         screen.fill((0,0,0))
         render_axes(screen,axis,ry,rx)
-        UI.draw(screen)
+        UI.draw()
         pygame.display.flip()
         clock.tick(15)
         for e in pygame.event.get():
