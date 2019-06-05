@@ -43,6 +43,7 @@ def get_arrow_head(b,e,pogm,scl):
     rz=atan2(d[1],d[0])*180/pi
     ry=atan2(d[2],d[0])*-180/pi
     pogm.m+=a.rot('z',rz).rot('y',ry).mov(*e).m
+
 def dtp(u,v):
     return sum(u[i]*v[i] for i in range(len(u)))
 def crs(p,vi):
@@ -55,16 +56,21 @@ def db(I,b,e,p):
     l=[e[i]-b[i]for i in(0,1,2)]
     r=[p[i]-(e[i]+b[i])/2 for i in(0,1,2)]
     crspr=crs(l,nrml(r))
-    return[I*i/self.dtp(r,r)for i in crspr]
-def b(p,w,s,t):
-    dbs=[db()for i in w]
+    return[I*i/dtp(r,r)for i in crspr]
 
+def wire(p,w):
+    b=[0,0,0]
+    for i in range(100):
+        deeb=db(w[0],[w[1][j]+(i/100)*(w[2][j]-w[1][j])for j in(0,1,2)],[w[1][j]+(i+1)/100*(w[2][j]-w[1][j])for j in(0,1,2)],p)
+        b=[b[j]+deeb[j]for j in(0,1,2)]
+    return b
 
 if __name__ == '__main__':
     axis=Etrx()
-    axis.e((-50,50,-50),(-50,50,50))
-    axis.e((-50,50,-50),(-50,-50,-50))
-    axis.e((-50,50,-50),(50,50,-50))
+    axis.e((-50,-50,-50),(-50,-50,50))
+    axis.e((-50,-50,-50),(-50,50,-50))
+    axis.e((-50,-50,-50),(50,-50,-50))
+
     axia=Etrx()
     for e in axis.edgs():
         get_arrow_head(*e,axia,10)
@@ -77,6 +83,17 @@ if __name__ == '__main__':
     rx=0
     m1 = False
     UI = UserInterface()
+
+    '''    w=[100,[0,0,-50],[0,0,50]]
+    axis.e(w[1],w[2])
+    for x in range(-45,50,15):
+        for y in range(-45,50,15):
+            for z in range(-45,50,15):
+                b=wire((x,y,z),w)
+                bv=(x,y,z),[(x,y,z)[i]+b[i]for i in(0,1,2)]
+                axis.e(*bv)
+                #get_arrow_head(*bv,axia,4)
+    '''             
     while playin:
         screen.fill((0,0,0))
         render_axes(screen,axis,ry,rx)
@@ -91,6 +108,7 @@ if __name__ == '__main__':
             dryrx=pygame.mouse.get_rel()
             ry+=dryrx[0]
             rx+=dryrx[1]
+            rx = -50 if rx < -50 else (50 if rx > 50 else rx)
         else:
             pygame.mouse.get_rel()
         pr = pygame.key.get_pressed()
