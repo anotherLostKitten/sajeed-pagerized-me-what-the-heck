@@ -80,12 +80,8 @@ if __name__ == '__main__':
     while playin:
         screen.fill((0,0,0))
         render_axes(screen,axis,ry,rx)
-<<<<<<< HEAD
-        UI.draw()
-=======
         render_arrows(screen,axia,ry,rx)
-        UI.draw(screen)
->>>>>>> f547b6057b95b82a58fcfb03c85ddcba52fae766
+        UI.draw()
         pygame.display.flip()
         clock.tick(15)
         for e in pygame.event.get():
