@@ -113,36 +113,20 @@ if __name__ == '__main__':
     m1 = False
     UI = UserInterface(screen)
 
-<<<<<<< HEAD
-    w=[100,[0,0,-50],[0,0,50]]
-    axis.e(w[1],w[2])
-    for x in range(-45,50,15):
-        for y in range(-45,50,15):
-            for z in range(-45,50,15):
-                b=wire((x,y,z),w)
-                bv=(x,y,z),[(x,y,z)[i]+b[i]for i in(0,1,2)]
-                axis.e(*bv)
-                get_arrow_head(*bv,axia,2)
-=======
     wr=[[100,[0,0,-50],[0,0,50]]]
     sl=[]
     tl=[]
     bis,bia,rndrwrsgmr=bf(wr,sl,tl)
->>>>>>> e300aae73b9c12da568aafb07c48292ad277679c
     while playin:
         screen.fill((0,0,0))
         render_axes(screen,axis,ry,rx)
         render_arrows(screen,axia,ry,rx)
-<<<<<<< HEAD
-        UI.draw()
-=======
 
         render_axes(screen,rndrwrsgmr,ry,rx,(0,255,0))
 
         render_axes(screen,bis,ry,rx,(255,0,0))
         render_arrows(screen,bia,ry,rx,(255,0,0))
-        UI.draw(screen)
->>>>>>> e300aae73b9c12da568aafb07c48292ad277679c
+        UI.draw()
         pygame.display.flip()
         clock.tick(15)
         for e in pygame.event.get():
