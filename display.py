@@ -18,13 +18,13 @@ def get_textures(filename):
     return textures
 
 def render_axes(s,axis,ry,rx,clr=(255,255,255)):
-    m=axis.rot('y',ry).rot('x',rx).mov(90,90,0).scl(3)
+    m=axis.scla(1,-1,1).rot('y',ry).rot('x',rx).mov(90,90,0).scl(3)
     for i in range(0,len(m.m),8):
         pygame.draw.line(s,clr,(m.m[i],m.m[i+1]),(m.m[i+4],m.m[i+5]),1)
 
         
 def render_arrows(s,axia,ry,rx,clr=(255,255,255)):
-    m=axia.rot('y',ry).rot('x',rx).mov(90,90,0).scl(3)
+    m=axia.scla(1,-1,1).rot('y',ry).rot('x',rx).mov(90,90,0).scl(3)
     for i in range(0,len(m.m),28):
         for j in range(4,28,4):
             pygame.draw.polygon(s,clr,((m.m[i],m.m[i+1]),(m.m[i+j],m.m[i+j+1]),(m.m[i+(j+4)%28],m.m[i+(j+5)%28]) ))
@@ -42,6 +42,8 @@ def get_arrow_head(b,e,pogm,scl):
     d=[e[i]-b[i]for i in(0,1,2)]
     rz=atan2(d[1],d[0])*180/pi
     ry=atan2(d[2],d[0])*-180/pi
+    if(b[0]>e[0]):
+        ry+=180
     pogm.m+=a.rot('z',rz).rot('y',ry).mov(*e).m
 
 def dtp(u,v):
@@ -58,18 +60,45 @@ def db(I,b,e,p):
     crspr=crs(l,nrml(r))
     return[I*i/dtp(r,r)for i in crspr]
 
-def wire(p,w):
+def wire(p,w,rndrwrsgmr):
     b=[0,0,0]
     for i in range(100):
+        rndrwrsgmr.e([w[1][j]+(i/100)*(w[2][j]-w[1][j])for j in(0,1,2)],[w[1][j]+(i+1)/100*(w[2][j]-w[1][j])for j in(0,1,2)])
         deeb=db(w[0],[w[1][j]+(i/100)*(w[2][j]-w[1][j])for j in(0,1,2)],[w[1][j]+(i+1)/100*(w[2][j]-w[1][j])for j in(0,1,2)],p)
         b=[b[j]+deeb[j]for j in(0,1,2)]
     return b
+def sol(p,s,rndrwrsgmr):
+    pass
 
+def tyl(p,t,rndrwrsgmr):
+    pass
+
+def bf(wr,sl,tl):
+    bis=Etrx()
+    bia=Etrx()
+    rndrwrsgmr=Etrx()
+    for x in range(-45,50,18):
+        for y in range(-45,50,18):
+            for z in range(-45,50,18):
+                bd=[wire((x,y,z),w,rndrwrsgmr)for w in wr]
+                bw=[sum(e[j]for e in bd)for j in(0,1,2)]
+
+                bd=[sol((x,y,z),w,rndrwrsgmr)for w in sl]
+                bs=[sum(e[j]for e in bd)for j in(0,1,2)]
+
+                bd=[tyl((x,y,z),w,rndrwrsgmr)for w in tl]
+                bt=[sum(e[j]for e in bd)for j in(0,1,2)]
+
+                bv=(x,y,z),[(x,y,z)[i]+bw[i]+bs[i]+bt[i]for i in(0,1,2)]
+                bis.e(*bv)
+                get_arrow_head(*bv,bia,4)
+    return(bis,bia,rndrwrsgmr)
 if __name__ == '__main__':
     axis=Etrx()
-    axis.e((-50,-50,-50),(-50,-50,50))
-    axis.e((-50,-50,-50),(-50,50,-50))
-    axis.e((-50,-50,-50),(50,-50,-50))
+    
+    axis.e((-50,0,0),(50,0,0))
+    axis.e((0,-50,0),(0,50,0))
+    axis.e((0,0,-50),(0,0,50))
 
     axia=Etrx()
     for e in axis.edgs():
@@ -79,25 +108,24 @@ if __name__ == '__main__':
     screen.fill((0,0,0))
     clock = pygame.time.Clock()
     playin=True
-    ry=0
-    rx=0
+    ry=-15
+    rx=5
     m1 = False
     UI = UserInterface()
 
-    '''    w=[100,[0,0,-50],[0,0,50]]
-    axis.e(w[1],w[2])
-    for x in range(-45,50,15):
-        for y in range(-45,50,15):
-            for z in range(-45,50,15):
-                b=wire((x,y,z),w)
-                bv=(x,y,z),[(x,y,z)[i]+b[i]for i in(0,1,2)]
-                axis.e(*bv)
-                #get_arrow_head(*bv,axia,4)
-    '''             
+    wr=[[100,[0,0,-50],[0,0,50]]]
+    sl=[]
+    tl=[]
+    bis,bia,rndrwrsgmr=bf(wr,sl,tl)
     while playin:
         screen.fill((0,0,0))
         render_axes(screen,axis,ry,rx)
         render_arrows(screen,axia,ry,rx)
+
+        render_axes(screen,rndrwrsgmr,ry,rx,(0,255,0))
+
+        render_axes(screen,bis,ry,rx,(255,0,0))
+        render_arrows(screen,bia,ry,rx,(255,0,0))
         UI.draw(screen)
         pygame.display.flip()
         clock.tick(15)
