@@ -42,6 +42,8 @@ def get_arrow_head(b,e,pogm,scl):
     d=[e[i]-b[i]for i in(0,1,2)]
     rz=atan2(d[1],d[0])*180/pi
     ry=atan2(d[2],d[0])*-180/pi
+    if (b[0] >= e[0]):
+        ry += 180
     pogm.m+=a.rot('z',rz).rot('y',ry).mov(*e).m
 
 def dtp(u,v):
@@ -82,9 +84,9 @@ if __name__ == '__main__':
     ry=0
     rx=0
     m1 = False
-    UI = UserInterface()
+    UI = UserInterface(screen)
 
-    '''    w=[100,[0,0,-50],[0,0,50]]
+    w=[100,[0,0,-50],[0,0,50]]
     axis.e(w[1],w[2])
     for x in range(-45,50,15):
         for y in range(-45,50,15):
@@ -92,8 +94,7 @@ if __name__ == '__main__':
                 b=wire((x,y,z),w)
                 bv=(x,y,z),[(x,y,z)[i]+b[i]for i in(0,1,2)]
                 axis.e(*bv)
-                #get_arrow_head(*bv,axia,4)
-    '''             
+                get_arrow_head(*bv,axia,2)
     while playin:
         screen.fill((0,0,0))
         render_axes(screen,axis,ry,rx)
@@ -105,12 +106,20 @@ if __name__ == '__main__':
             if e.type == pygame.locals.QUIT:
                 playin = False
         if(pygame.mouse.get_pressed()[0]):
+            if (pygame.mouse.get_pos()[1] <= 509):
+                if(clicked):
+                    dragging = True
+            elif(clicked):
+                clicked = False
+        else:
+            clicked = True
+            dragging = False
+            pygame.mouse.get_rel()
+        if(dragging):
             dryrx=pygame.mouse.get_rel()
             ry+=dryrx[0]
             rx+=dryrx[1]
             rx = -50 if rx < -50 else (50 if rx > 50 else rx)
-        else:
-            pygame.mouse.get_rel()
         pr = pygame.key.get_pressed()
         for k in (ke for ke in movs if pr[ke]):
                 print(k)
