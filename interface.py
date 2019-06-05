@@ -12,12 +12,17 @@ class UserInterface:
         pygame.draw.line(self.sur, (0, 0, 0), (615, 543), (645, 543), 3)
         self.solenoid(620, 586)
         #self.toroid(620, 629)
-        myB = pygame.font.Font('ebrima.ttf', 12).render('42.16', True, (0, 0, 0))
+        myText = pygame.font.Font('ebrima.ttf', 12)
+        myB = myText.render('42.16', True, (0, 0, 0))
         bRect = myB.get_rect()
         bRect.center = (40, 527.5)
+        letterB = myText.render('B:', True, (0, 0, 0))
+        letterRect = letterB.get_rect()
+        letterRect.center = (17, 527.5)
         pygame.draw.rect(self.sur, (0, 0, 0), pygame.Rect(24, 519, 32, 17), 0)
         pygame.draw.rect(self.sur, (255, 255, 255), pygame.Rect(25, 520, 30, 15), 0)
         self.sur.blit(myB, bRect)
+        self.sur.blit(letterB, letterRect)
 
     def solenoid(self, startx, starty):
         pygame.draw.line(self.sur, (0, 0, 0), (startx - 5, starty + 10), (startx, starty + 10), 3)
