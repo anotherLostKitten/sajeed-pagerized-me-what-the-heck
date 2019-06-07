@@ -18,17 +18,16 @@ def get_textures(filename):
     return textures
 
 def render_axes(s,axis,ry,rx,clr=(255,255,255)):
-    m=axis.scla(1,-1,1).rot('y',ry).rot('x',rx).mov(90,90,0).scl(3)
+    m=axis.x(axis.ident().scla(1,-1,1).rot('y',ry).rot('x',rx).mov(90,90,0).scl(3).m)
     for i in range(0,len(m.m),8):
         pygame.draw.line(s,clr,(m.m[i],m.m[i+1]),(m.m[i+4],m.m[i+5]),1)
 
         
 def render_arrows(s,axia,ry,rx,clr=(255,255,255)):
-    m=axia.scla(1,-1,1).rot('y',ry).rot('x',rx).mov(90,90,0).scl(3)
+    m=axia.x(axia.ident().scla(1,-1,1).rot('y',ry).rot('x',rx).mov(90,90,0).scl(3).m)
     for i in range(0,len(m.m),28):
-        for j in range(4,28,4):
+        for j in range(0,28,4):
             pygame.draw.polygon(s,clr,((m.m[i],m.m[i+1]),(m.m[i+j],m.m[i+j+1]),(m.m[i+(j+4)%28],m.m[i+(j+5)%28]) ))
-        pygame.draw.polygon(s,clr,[(m.m[i+j],m.m[i+j+1])for j in range(4,28,4)])
 
 def get_arrow_head(b,e,pogm,scl):
     a=Etrx()
