@@ -26,8 +26,9 @@ def render_axes(s,axis,ry,rx,clr=(255,255,255)):
 def render_arrows(s,axia,ry,rx,clr=(255,255,255)):
     m=axia.x(axia.ident().scla(1,-1,1).rot('y',ry).rot('x',rx).mov(90,90,0).scl(3).m)
     for i in range(0,len(m.m),28):
-        for j in range(0,28,4):
+        for j in range(0,24,4):
             pygame.draw.polygon(s,clr,((m.m[i],m.m[i+1]),(m.m[i+j],m.m[i+j+1]),(m.m[i+(j+4)%28],m.m[i+(j+5)%28]) ))
+        pygame.draw.polygon(s,clr,((m.m[i],m.m[i+1]),(m.m[i+24],m.m[i+25]),(m.m[i+4],m.m[i+5]) ))
 
 def get_arrow_head(b,e,pogm,scl):
     a=Etrx()
