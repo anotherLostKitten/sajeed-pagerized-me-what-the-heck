@@ -23,6 +23,16 @@ class UserInterface:
         pygame.draw.rect(self.sur, (255, 255, 255), pygame.Rect(25, 520, 30, 15), 0)
         self.sur.blit(myB, bRect)
         self.sur.blit(letterB, letterRect)
+        self.text(myText, "Current:", 498, 516.5)
+        self.text(myText, "Start X:", 500, 532.5)
+        self.text(myText, "Start Y:", 500, 544.5)
+        self.text(myText, "Start Z:", 500, 556.5)
+        self.text(myText, "End X:", 502, 574.5)
+        self.text(myText, "End Y:", 502, 592.5)
+        self.text(myText, "End Z:", 502, 604.5)
+        self.text(myText, "Loop Radius:", 485, 622.5)
+        self.text(myText, "Number of Turns:", 473, 634.5)
+        self.text(myText, "Major Radius:", 483, 652.5)
 
     def solenoid(self, startx, starty):
         pygame.draw.line(self.sur, (0, 0, 0), (startx - 5, starty + 10), (startx, starty + 10), 3)
@@ -44,3 +54,9 @@ class UserInterface:
                 print(round(5 * cos(i * pi / 4)))
                 container = pygame.Rect(round(startx + 5 * cos(i * pi / 4)), round(starty + 5 * sin(i * pi / 4)), round(5 * cos(i * pi / 4)), 5)
                 pygame.draw.ellipse(self.sur, (0, 0, 0), container, 1)
+
+    def text(self, font, text, centerX, centerY):
+        letter = font.render(text, True, (0, 0, 0))
+        letterRect = letter.get_rect()
+        letterRect.center = (centerX, centerY)
+        self.sur.blit(letter, letterRect)
