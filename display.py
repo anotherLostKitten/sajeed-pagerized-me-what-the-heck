@@ -61,8 +61,8 @@ def db(I,b,e,p):
 
 def wire(p,w,rndrwrsgmr):
     b=[0,0,0]
+    rndrwrsgmr.e([w[1][j]+(w[2][j]-w[1][j])for j in(0,1,2)],[w[1][j]+(w[2][j]-w[1][j])for j in(0,1,2)])
     for i in range(100):
-        rndrwrsgmr.e([w[1][j]+(i/100)*(w[2][j]-w[1][j])for j in(0,1,2)],[w[1][j]+(i+1)/100*(w[2][j]-w[1][j])for j in(0,1,2)])
         deeb=db(w[0],[w[1][j]+(i/100)*(w[2][j]-w[1][j])for j in(0,1,2)],[w[1][j]+(i+1)/100*(w[2][j]-w[1][j])for j in(0,1,2)],p)
         b=[b[j]+deeb[j]for j in(0,1,2)]
     return b
@@ -121,7 +121,7 @@ if __name__ == '__main__':
         render_axes(screen,axis,ry,rx)
         render_arrows(screen,axia,ry,rx)
 
-        #render_axes(screen,rndrwrsgmr,ry,rx,(0,255,0))
+        render_axes(screen,rndrwrsgmr,ry,rx,(0,255,0))
 
         render_axes(screen,bis,ry,rx,(255,0,0))
         render_arrows(screen,bia,ry,rx,(255,0,0))
