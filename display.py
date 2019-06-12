@@ -1,4 +1,4 @@
-from math import atan2,sqrt,pi
+from math import atan2,sqrt,pi,cos,sin
 
 import pygame
 import pygame.locals
@@ -51,9 +51,10 @@ def dtp(u,v):
 def crs(p,vi):
     return(p[1]*vi[2]-p[2]*vi[1],p[2]*vi[0]-p[0]*vi[2],p[0]*vi[1]-p[1]*vi[0])
 def nrml(x):
-    f=sqrt(dtp(x,x))
+    f=vlen(x)
     return[i/f for i in x]if f else[0]*3
-
+def vlen(x):
+    return sqrt(dtp(x,x))
 def db(I,b,e,p):
     l=[e[i]-b[i]for i in(0,1,2)]
     r=[p[i]-(e[i]+b[i])/2 for i in(0,1,2)]
@@ -62,13 +63,30 @@ def db(I,b,e,p):
 
 def wire(p,w,rndrwrsgmr):
     b=[0,0,0]
-    rndrwrsgmr.e([w[1][j]+(w[2][j]-w[1][j])for j in(0,1,2)],[w[1][j]+(w[2][j]-w[1][j])for j in(0,1,2)])
-    for i in range(100):
-        deeb=db(w[0],[w[1][j]+(i/100)*(w[2][j]-w[1][j])for j in(0,1,2)],[w[1][j]+(i+1)/100*(w[2][j]-w[1][j])for j in(0,1,2)],p)
+    k=100
+    for i in range(k):
+        deeb=db(w[0],[w[1][j]+(i/k)*(w[2][j]-w[1][j])for j in(0,1,2)],[w[1][j]+(i+1)/k*(w[2][j]-w[1][j])for j in(0,1,2)],p)
+        b=[b[j]+deeb[j]for j in(0,1,2)]
+    rndrwrsgmr.e([w[1][j]for j in(0,1,2)],[w[2][j]for j in(0,1,2)])
+    return b
+def sol(p,s,rndrwrsgmr): #[current,start,end,num_turns,radius]
+    b=[0,0,0]
+    k=100
+    for i in range(k):
+        a=Etrx()
+        a.p(0,s[4]*cos(2*pi*i/k*s[3]),s[4]*sin(2*pi*i/k*s[3]))
+        d=[s[2][i]-s[1][i]for i in(0,1,2)]
+        a.p(0,s[4]*cos(2*pi*(i+1)/k*s[3]),s[4]*sin(2*pi*(i+1)/k*s[3]))
+        rz=atan2(d[1],d[0])*180/pi
+        ry=atan2(d[2],d[0])*-180/pi
+        if(s[1][0]>s[2][0]):
+            ry+=180
+        pts=a.rot('z',rz).rot('y',ry).mov(*[s[1][j]+(i/k)*(s[2][j]-s[1][j])for j in(0,1,2)])
+        pts2=pts.mov(*[(s[2][j]-s[1][j])/k for j in(0,1,2)])
+        deeb=db(s[0],pts.m[0:3],pts2.m[4:7],p)
+        rndrwrsgmr.e(pts.m[0:3],pts2.m[4:7])
         b=[b[j]+deeb[j]for j in(0,1,2)]
     return b
-def sol(p,s,rndrwrsgmr):
-    pass
 
 def tyl(p,t,rndrwrsgmr):
     pass
@@ -93,6 +111,7 @@ def bf(wr,sl,tl):
                 bis.e(*bv)
                 get_arrow_head(*bv,bia,4)
     return(bis,bia,rndrwrsgmr)
+
 if __name__ == '__main__':
     axis=Etrx()
     
@@ -113,8 +132,8 @@ if __name__ == '__main__':
     m1 = False
     UI = UserInterface(screen)
 
-    wr=[[100,[0,0,-50],[0,0,50]]]
-    sl=[]
+    wr=[] #[current,start,end] '''[100,[0,0,-50],[0,0,50]]'''
+    sl=[[1,[0,-50,0],[0,50,0],5,50]] #[current,start,end,num_turns,radius]
     tl=[]
     bis,bia,rndrwrsgmr=bf(wr,sl,tl)
     while playin:
