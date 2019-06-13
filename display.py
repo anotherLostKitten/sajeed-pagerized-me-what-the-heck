@@ -128,7 +128,7 @@ if __name__ == '__main__':
     clock = pygame.time.Clock()
     playin=True
     ry=-15
-    rx=5
+    rx=-5
     m1 = False
     UI = UserInterface(screen)
 
@@ -136,15 +136,25 @@ if __name__ == '__main__':
     sl=[[1,[0,-50,0],[0,50,0],5,50]] #[current,start,end,num_turns,radius]
     tl=[]
     bis,bia,rndrwrsgmr=bf(wr,sl,tl)
+    dragging = False
+    screen.fill((0,0,0))
+    render_axes(screen,axis,ry,rx)
+    render_arrows(screen,axia,ry,rx)
+
+    render_axes(screen,rndrwrsgmr,ry,rx,(0,255,0))
+
+    render_axes(screen,bis,ry,rx,(255,0,0))
+    render_arrows(screen,bia,ry,rx,(255,0,0))
     while playin:
-        screen.fill((0,0,0))
-        render_axes(screen,axis,ry,rx)
-        render_arrows(screen,axia,ry,rx)
+        if (dragging):
+            screen.fill((0,0,0))
+            render_axes(screen,axis,ry,rx)
+            render_arrows(screen,axia,ry,rx)
 
-        render_axes(screen,rndrwrsgmr,ry,rx,(0,255,0))
+            render_axes(screen,rndrwrsgmr,ry,rx,(0,255,0))
 
-        render_axes(screen,bis,ry,rx,(255,0,0))
-        render_arrows(screen,bia,ry,rx,(255,0,0))
+            render_axes(screen,bis,ry,rx,(255,0,0))
+            render_arrows(screen,bia,ry,rx,(255,0,0))
         UI.draw()
         pygame.display.flip()
         clock.tick(15)
