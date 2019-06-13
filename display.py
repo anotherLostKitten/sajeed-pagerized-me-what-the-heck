@@ -28,9 +28,15 @@ def render_arrows(s,axia,ry,rx,clr=(255,255,255)):
     for i in range(0,len(m.m),28):
         for j in range(0,24,4):
             pygame.draw.polygon(s,clr,((m.m[i],m.m[i+1]),(m.m[i+j],m.m[i+j+1]),(m.m[i+(j+4)%28],m.m[i+(j+5)%28]) ))
+            pygame.draw.polygon(s,clr,((m.m[i],m.m[i+1]),(m.m[i+24],m.m[i+25]),(m.m[i+4],m.m[i+5]) ))
+def render_arrows_color(s,axia,axis,ry,rx,clr1,clr2,vlenmax):
+    m=axia.x(axia.ident().scla(1,-1,1).rot('y',ry).rot('x',rx).mov(90,90,0).scl(3).m)
+    for i in range(0,len(m.m),28):
+        vleni=vlen([bis.m[2*i//7+j]-bis.m[2*i//7+j+4]for j in(0,1,2)])
+        clr=[round(clr1[j]+vleni/vlenmax*(clr2[j]-clr1[j]))for j in(0,1,2)]
+        for j in range(0,24,4):
+            pygame.draw.polygon(s,clr,((m.m[i],m.m[i+1]),(m.m[i+j],m.m[i+j+1]),(m.m[i+(j+4)%28],m.m[i+(j+5)%28]) ))
         pygame.draw.polygon(s,clr,((m.m[i],m.m[i+1]),(m.m[i+24],m.m[i+25]),(m.m[i+4],m.m[i+5]) ))
-def render_arrows_color(s,axia,ry,rx,clr=(255,255,255)):
-
         
 def get_arrow_head(b,e,pogm,scl):
     a=Etrx()
@@ -154,6 +160,7 @@ if __name__ == '__main__':
     sl=[[1,[0,-50,0],[0,50,0],5,50]] #[current,start,end,num_turns,radius]
     tl=[]
     bis,bia,rndrwrsgmr,vlenmax=bf(wr,sl,tl)
+    print(vlenmax)
     while playin:
         screen.fill((0,0,0))
         render_axes(screen,axis,ry,rx)
@@ -161,7 +168,7 @@ if __name__ == '__main__':
 
         render_axes(screen,rndrwrsgmr,ry,rx,(0,255,0))
 
-        render_arrows_color(screen,bia,ry,rx,(255,0,0),(0,0,255),vlenmax)
+        render_arrows_color(screen,bia,bis,ry,rx,(255,0,0),(0,0,255),vlenmax)
 
         UI.draw()
         pygame.display.flip()
