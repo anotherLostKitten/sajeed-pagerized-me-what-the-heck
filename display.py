@@ -194,6 +194,7 @@ if __name__ == '__main__':
                     dragging = True
             elif(clicked):
                 clicked = False
+                UI.click(*pygame.mouse.get_pos())
         else:
             clicked = True
             dragging = False

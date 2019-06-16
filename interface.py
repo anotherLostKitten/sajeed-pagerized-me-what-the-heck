@@ -9,16 +9,22 @@ class TextBox:
         self.value_text = ""
         self.sur = surface
         self.font = font
-
+        self.active = False
+        
     def draw(self):
         letter = self.font.render(self.label_text, True, (0, 0, 0))
         letterRect = letter.get_rect()
         letterRect.center = (self.centerX, self.centerY)
         self.sur.blit(letter, letterRect)
         
-        pygame.draw.rect(self.sur, (0, 0, 0), pygame.Rect(len(self.label_text)*3.6 + self.centerX + 4, self.centerY - 7, 32, 14), 0)
+        if(self.active):
+            pygame.draw.rect(self.sur, (0, 0, 0), pygame.Rect(len(self.label_text)*3.6 + self.centerX + 4, self.centerY - 7, 32, 14), 0)
         pygame.draw.rect(self.sur, (255, 255, 255), pygame.Rect(len(self.label_text)*3.6 + self.centerX + 5, self.centerY - 6, 30, 12), 0)
-
+    def key(self,key):
+        self.value_text+=key
+    def clicked(self,x,y):
+        self.active = len(self.label_text)*3.6 +self.centerX-12 < x < len(self.label_text)*3.6 +self.centerX+20 and self.centerY-6 <  y < self.centerY+6
+        return self.active
 class UserInterface:
     def __init__(self, surf):
         self.sur = surf
@@ -37,6 +43,8 @@ class UserInterface:
                     TextBox(484, 624,"Loop Radius:",self.sur, self.font),
                     TextBox(470,637,"Number of Turns:",self.sur, self.font),
                     TextBox(480, 655.5,"Major Radius:",self.sur, self.font)]
+        self.active_text = -1
+        self.mode = []
     def draw(self):
         border = pygame.Rect(0, 500, 672, 172)
         pygame.draw.rect(self.sur, (200, 200, 200), border, 0)
@@ -57,7 +65,16 @@ class UserInterface:
         self.sur.blit(letterB, letterRect)
         for i in self.texts:
             i.draw()
-        
+    def key(self,key):
+        if active_text != -1:
+            if key in"0123456789.":
+                self.texts[self.active_text].key(key)
+            elif key=="":
+                pass
+    def click(self,x,y):
+        ts=[i for i in range(len(self.texts))if self.texts[i].clicked(x,y)]
+        self.active_text=ts[0]if ts else-1
+        print(self.active_text)
     def solenoid(self, startx, starty):
         pygame.draw.line(self.sur, (0, 0, 0), (startx - 5, starty + 10), (startx, starty + 10), 3)
         for i in range(3):
