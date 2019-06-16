@@ -208,7 +208,7 @@ if __name__ == '__main__':
 
         UI.draw()
         pygame.display.flip()
-        #clock.tick(15)
+        clock.tick(15)
         for e in pygame.event.get():
             if e.type == pygame.locals.QUIT:
                 playin = False

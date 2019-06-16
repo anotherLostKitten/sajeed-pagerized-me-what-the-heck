@@ -5,8 +5,7 @@ class TextBox:
     def __init__(self, cx, cy, tex, box, surface, font):
         self.centerX = cx
         self.centerY = cy
-        self.label_text = tex
-        self.value_text = ""
+        self.text = tex
         self.sur = surface
         self.boxText = str(box)
         self.font = font
@@ -29,19 +28,6 @@ class UserInterface:
         self.z = pz
         self.textBoxes = []
 
-        self.texts=[TextBox(17,590,"X:", self.sur, self.font),
-                    TextBox(17, 620,"Y:",self.sur, self.font),
-                    TextBox(17, 650,"Z:",self.sur, self.font),
-                    TextBox(498, 519.5,"Current:",self.sur, self.font),
-                    TextBox(498, 537.5,"Start X:",self.sur, self.font),
-                    TextBox(498, 549.5,"Start Y:",self.sur, self.font),
-                    TextBox(498, 562.5,"Start Z:",self.sur, self.font),
-                    TextBox(505, 581.5,"End X:",self.sur, self.font),
-                    TextBox(505, 594.5,"End Y:",self.sur, self.font),
-                    TextBox(505, 607.5,"End Z:",self.sur, self.font),
-                    TextBox(484, 624,"Loop Radius:",self.sur, self.font),
-                    TextBox(470,637,"Number of Turns:",self.sur, self.font),
-                    TextBox(480, 655.5,"Major Radius:",self.sur, self.font)]
     def draw(self):
         border = pygame.Rect(0, 500, 672, 172)
         pygame.draw.rect(self.sur, (200, 200, 200), border, 0)
