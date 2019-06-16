@@ -12,7 +12,7 @@ class UserInterface:
         pygame.draw.line(self.sur, (0, 0, 0), (615, 543), (645, 543), 3)
         self.solenoid(620, 586)
         #self.toroid(620, 629)
-        myText = pygame.font.Font('ebrima.ttf', 12)
+        myText = pygame.font.Font('cour.ttf', 12)
         myB = myText.render('42.16', True, (0, 0, 0))
         bRect = myB.get_rect()
         bRect.center = (40, 527.5)
@@ -23,6 +23,9 @@ class UserInterface:
         pygame.draw.rect(self.sur, (255, 255, 255), pygame.Rect(25, 520, 30, 15), 0)
         self.sur.blit(myB, bRect)
         self.sur.blit(letterB, letterRect)
+        self.text(myText, "X:", 17, 590)
+        self.text(myText, "Y:", 17, 620)
+        self.text(myText, "Z:", 17, 650)
         self.text(myText, "Current:", 498, 519.5)
         self.text(myText, "Start X:", 500, 536.5)
         self.text(myText, "Start Y:", 500, 548.5)
@@ -60,3 +63,7 @@ class UserInterface:
         letterRect = letter.get_rect()
         letterRect.center = (centerX, centerY)
         self.sur.blit(letter, letterRect)
+        pygame.draw.rect(self.sur, (0, 0, 0), pygame.Rect(len(text)*2.5 + centerX + 4, centerY - 5.5, 32, 14), 0)
+        pygame.draw.rect(self.sur, (255, 255, 255), pygame.Rect(len(text)*2.5 + centerX + 5, centerY - 4.5, 30, 12), 0)
+
+#class TextBox:
