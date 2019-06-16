@@ -1,4 +1,4 @@
-from math import atan2,sqrt,pi,cos,sin
+from math import atan2,sqrt,pi,cos,sin,floor
 
 import pygame
 import pygame.locals
@@ -28,8 +28,16 @@ def render_arrows(s,axia,ry,rx,clr=(255,255,255)):
     for i in range(0,len(m.m),28):
         for j in range(0,24,4):
             pygame.draw.polygon(s,clr,((m.m[i],m.m[i+1]),(m.m[i+j],m.m[i+j+1]),(m.m[i+(j+4)%28],m.m[i+(j+5)%28]) ))
+            pygame.draw.polygon(s,clr,((m.m[i],m.m[i+1]),(m.m[i+24],m.m[i+25]),(m.m[i+4],m.m[i+5]) ))
+def render_arrows_color(s,axia,axis,ry,rx,clr1,clr2,vlenmax):
+    m=axia.x(axia.ident().scla(1,-1,1).rot('y',ry).rot('x',rx).mov(90,90,0).scl(3).m)
+    for i in range(0,len(m.m),28):
+        vleni=vlen([bis.m[2*i//7+j]-bis.m[2*i//7+j+4]for j in(0,1,2)])
+        clr=[round(clr1[j]+vleni/vlenmax*(clr2[j]-clr1[j]))for j in(0,1,2)]
+        for j in range(0,24,4):
+            pygame.draw.polygon(s,clr,((m.m[i],m.m[i+1]),(m.m[i+j],m.m[i+j+1]),(m.m[i+(j+4)%28],m.m[i+(j+5)%28]) ))
         pygame.draw.polygon(s,clr,((m.m[i],m.m[i+1]),(m.m[i+24],m.m[i+25]),(m.m[i+4],m.m[i+5]) ))
-
+        
 def get_arrow_head(b,e,pogm,scl):
     a=Etrx()
     a.p(0,0,0)
@@ -71,7 +79,7 @@ def wire(p,w,rndrwrsgmr):
     return b
 def sol(p,s,rndrwrsgmr): #[current,start,end,num_turns,radius]
     b=[0,0,0]
-    k=100
+    k=20*s[3]
     for i in range(k):
         a=Etrx()
         a.p(0,s[4]*cos(2*pi*i/k*s[3]),s[4]*sin(2*pi*i/k*s[3]))
@@ -84,8 +92,20 @@ def sol(p,s,rndrwrsgmr): #[current,start,end,num_turns,radius]
         pts=a.rot('z',rz).rot('y',ry).mov(*[s[1][j]+(i/k)*(s[2][j]-s[1][j])for j in(0,1,2)])
         pts2=pts.mov(*[(s[2][j]-s[1][j])/k for j in(0,1,2)])
         deeb=db(s[0],pts.m[0:3],pts2.m[4:7],p)
-        rndrwrsgmr.e(pts.m[0:3],pts2.m[4:7])
         b=[b[j]+deeb[j]for j in(0,1,2)]
+    k=round(s[3]*(s[4]/23+3))
+    for i in range(k):
+        a=Etrx()
+        a.p(0,s[4]*cos(2*pi*i/k*s[3]),s[4]*sin(2*pi*i/k*s[3]))
+        d=[s[2][i]-s[1][i]for i in(0,1,2)]
+        a.p(0,s[4]*cos(2*pi*(i+1)/k*s[3]),s[4]*sin(2*pi*(i+1)/k*s[3]))
+        rz=atan2(d[1],d[0])*180/pi
+        ry=atan2(d[2],d[0])*-180/pi
+        if(s[1][0]>s[2][0]):
+            ry+=180
+        pts=a.rot('z',rz).rot('y',ry).mov(*[s[1][j]+(i/k)*(s[2][j]-s[1][j])for j in(0,1,2)])
+        pts2=pts.mov(*[(s[2][j]-s[1][j])/k for j in(0,1,2)])
+        rndrwrsgmr.e(pts.m[0:3],pts2.m[4:7])
     return b
 
 def tyl(p,t,rndrwrsgmr):
@@ -95,6 +115,7 @@ def bf(wr,sl,tl):
     bis=Etrx()
     bia=Etrx()
     rndrwrsgmr=Etrx()
+    vlenmax=0
     for x in range(-45,50,18):
         for y in range(-45,50,18):
             for z in range(-45,50,18):
@@ -107,10 +128,13 @@ def bf(wr,sl,tl):
                 bd=[tyl((x,y,z),w,rndrwrsgmr)for w in tl]
                 bt=[sum(e[j]for e in bd)for j in(0,1,2)]
 
-                bv=(x,y,z),[(x,y,z)[i]+bw[i]+bs[i]+bt[i]for i in(0,1,2)]
+                bbb=[bw[i]+bs[i]+bt[i]for i in(0,1,2)]
+                if vlenmax<vlen(bbb):
+                    vlenmax=vlen(bbb)
+                bv=(x,y,z),[(x,y,z)[i]+bbb[i]for i in(0,1,2)]
                 bis.e(*bv)
                 get_arrow_head(*bv,bia,4)
-    return(bis,bia,rndrwrsgmr)
+    return(bis,bia,rndrwrsgmr,vlenmax)
 
 if __name__ == '__main__':
     axis=Etrx()
@@ -127,8 +151,8 @@ if __name__ == '__main__':
     screen.fill((0,0,0))
     clock = pygame.time.Clock()
     playin=True
-    ry=-15
-    rx=-5
+    ry=105
+    rx=5
     m1 = False
     UI = UserInterface(screen)
 
@@ -144,7 +168,9 @@ if __name__ == '__main__':
     render_axes(screen,rndrwrsgmr,ry,rx,(0,255,0))
 
     render_axes(screen,bis,ry,rx,(255,0,0))
-    render_arrows(screen,bia,ry,rx,(255,0,0))
+    bis,bia,rndrwrsgmr,vlenmax=bf(wr,sl,tl)
+    render_arrows_color(screen,bia,bis,ry,rx,(255,0,0),(0,0,255),vlenmax)
+    print(vlenmax)
     while playin:
         if (dragging):
             screen.fill((0,0,0))
@@ -153,11 +179,9 @@ if __name__ == '__main__':
 
             render_axes(screen,rndrwrsgmr,ry,rx,(0,255,0))
 
-            render_axes(screen,bis,ry,rx,(255,0,0))
-            render_arrows(screen,bia,ry,rx,(255,0,0))
         UI.draw()
         pygame.display.flip()
-        clock.tick(15)
+        #clock.tick(15)
         for e in pygame.event.get():
             if e.type == pygame.locals.QUIT:
                 playin = False
