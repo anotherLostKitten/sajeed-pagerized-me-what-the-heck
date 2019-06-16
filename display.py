@@ -136,6 +136,31 @@ def bf(wr,sl,tl):
                 get_arrow_head(*bv,bia,4)
     return(bis,bia,rndrwrsgmr,vlenmax)
 
+def localbf(wr,sl,tl,x, y, z):
+    bis=Etrx()
+    bia=Etrx()
+    rndrwrsgmr=Etrx()
+    vlenmax=0
+    bd=[wire((x,y,z),w,rndrwrsgmr)for w in wr]
+    bw=[sum(e[j]for e in bd)for j in(0,1,2)]
+
+    bd=[sol((x,y,z),w,rndrwrsgmr)for w in sl]
+    bs=[sum(e[j]for e in bd)for j in(0,1,2)]
+
+    bd=[tyl((x,y,z),w,rndrwrsgmr)for w in tl]
+    bt=[sum(e[j]for e in bd)for j in(0,1,2)]
+
+    bbb=[bw[i]+bs[i]+bt[i]for i in(0,1,2)]
+    return vlen(bbb)
+
+def turnToClicker(minX, maxX, minY, maxY):
+    if (minX <= pygame.mouse.get_pos()[0] <= maxX and minY <= pygame.mouse.get_pos()[1] <= maxY):
+        pygame.mouse.set_cursor(*pygame.cursors.broken_x)
+        return False
+    else:
+        pygame.mouse.set_cursor(*pygame.cursors.arrow)
+        return True
+
 if __name__ == '__main__':
     axis=Etrx()
     
@@ -154,11 +179,12 @@ if __name__ == '__main__':
     ry=105
     rx=5
     m1 = False
-    UI = UserInterface(screen)
 
     wr=[[100,[0,0,-50],[0,0,50]]] #[current,start,end] '''[100,[0,0,-50],[0,0,50]]'''
     sl=[[1,[0,-50,0],[0,50,0],5,50]] #[current,start,end,num_turns,radius]
     tl=[]
+    UI = UserInterface(screen, localbf(wr,sl,tl,5, 5, 5), 5, 5, 5)
+    textBoxes = UI.returnTextBoxes()
     bis,bia,rndrwrsgmr,vlenmax=bf(wr,sl,tl)
     dragging = False
     screen.fill((0,0,0))
@@ -197,15 +223,20 @@ if __name__ == '__main__':
             dragging = False
             pygame.mouse.get_rel()
             
-        if (615 <= pygame.mouse.get_pos()[0] <= 645 and 538 <= pygame.mouse.get_pos()[1] <= 548) or (615 <= pygame.mouse.get_pos()[0] <= 645 and 586 <= pygame.mouse.get_pos()[1] <= 606):
-            pygame.mouse.set_cursor(*pygame.cursors.broken_x)
-        else:
-            pygame.mouse.set_cursor(*pygame.cursors.arrow)
         if(dragging):
             dryrx=pygame.mouse.get_rel()
             ry+=dryrx[0]
             rx+=dryrx[1]
             rx = -50 if rx < -50 else (50 if rx > 50 else rx)
+        else:
+            if (turnToClicker(615, 645, 538, 548)):
+                if(turnToClicker(615, 645, 586, 606)):
+                    i = 0
+                    while i < len(textBoxes):
+                        if(turnToClicker(len(textBoxes[i].text)*3.6 + textBoxes[i].centerX + 4, len(textBoxes[i].text)*3.6 + textBoxes[i].centerX + 34, textBoxes[i].centerY - 7, textBoxes[i].centerY + 7)):
+                            i += 1
+                        else:
+                            i = len(textBoxes)
         pr = pygame.key.get_pressed()
         for k in (ke for ke in movs if pr[ke]):
                 print(k)
