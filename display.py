@@ -93,7 +93,7 @@ def sol(p,s,rndrwrsgmr): #[current,start,end,num_turns,radius]
         pts2=pts.mov(*[(s[2][j]-s[1][j])/k for j in(0,1,2)])
         deeb=db(s[0],pts.m[0:3],pts2.m[4:7],p)
         b=[b[j]+deeb[j]for j in(0,1,2)]
-    k=round(s[3]*(s[4]/23+3))
+    k=round(s[3]*(s[4]/13+4))
     for i in range(k):
         a=Etrx()
         a.p(0,s[4]*cos(2*pi*i/k*s[3]),s[4]*sin(2*pi*i/k*s[3]))
@@ -212,6 +212,8 @@ if __name__ == '__main__':
         for e in pygame.event.get():
             if e.type == pygame.locals.QUIT:
                 playin = False
+            elif e.type == pygame.locals.KEYDOWN:
+                print(chr(e.key))
         if(pygame.mouse.get_pressed()[0]):
             if (pygame.mouse.get_pos()[1] <= 509):
                 if(clicked):
@@ -225,7 +227,7 @@ if __name__ == '__main__':
             
         if(dragging):
             dryrx=pygame.mouse.get_rel()
-            ry+=dryrx[0]
+            ry+=-dryrx[0]
             rx+=dryrx[1]
             rx = -50 if rx < -50 else (50 if rx > 50 else rx)
         else:
@@ -238,5 +240,3 @@ if __name__ == '__main__':
                         else:
                             i = len(textBoxes)
         pr = pygame.key.get_pressed()
-        for k in (ke for ke in movs if pr[ke]):
-                print(k)
