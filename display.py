@@ -4,7 +4,7 @@ import pygame
 import pygame.locals
 
 from matrix import Etrx
-from interface import UserInterface
+from interface import UserInterface, TextBox
 
 movs=(pygame.K_ESCAPE, pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d, pygame.K_UP, pygame.K_LEFT, pygame.K_DOWN, pygame.K_RIGHT, pygame.K_SPACE, pygame.K_q,pygame.K_1,pygame.K_2,pygame.K_3,pygame.K_4,pygame.K_5,pygame.K_6,pygame.K_7,pygame.K_8,pygame.K_9)
 
@@ -159,7 +159,7 @@ if __name__ == '__main__':
     wr=[[100,[0,0,-50],[0,0,50]]] #[current,start,end] '''[100,[0,0,-50],[0,0,50]]'''
     sl=[[1,[0,-50,0],[0,50,0],5,50]] #[current,start,end,num_turns,radius]
     tl=[]
-    bis,bia,rndrwrsgmr=bf(wr,sl,tl)
+    bis,bia,rndrwrsgmr,vlenmax=bf(wr,sl,tl)
     dragging = False
     screen.fill((0,0,0))
     render_axes(screen,axis,ry,rx)
@@ -176,7 +176,8 @@ if __name__ == '__main__':
             screen.fill((0,0,0))
             render_axes(screen,axis,ry,rx)
             render_arrows(screen,axia,ry,rx)
-
+        else:
+            render_arrows_color(screen,bia,bis,ry,rx,(255,0,0),(0,0,255),vlenmax)
             render_axes(screen,rndrwrsgmr,ry,rx,(0,255,0))
 
         UI.draw()

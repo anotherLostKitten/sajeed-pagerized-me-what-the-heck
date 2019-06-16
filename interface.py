@@ -1,5 +1,17 @@
 import pygame
 from math import pi,sin,cos
+
+class TextBox:
+    def __init__(self, cx, cy, tex, surface):
+        self.centerX = cx
+        self.centerY = cy
+        self.text = tex
+        self.sur = surface
+
+    def draw(self):
+        pygame.draw.rect(self.sur, (0, 0, 0), pygame.Rect(len(self.text)*3.6 + self.centerX + 4, self.centerY - 7, 32, 14), 0)
+        pygame.draw.rect(self.sur, (255, 255, 255), pygame.Rect(len(self.text)*3.6 + self.centerX + 5, self.centerY - 6, 30, 12), 0)
+
 class UserInterface:
     def __init__(self, surf):
         self.sur = surf
@@ -27,15 +39,15 @@ class UserInterface:
         self.text(myText, "Y:", 17, 620)
         self.text(myText, "Z:", 17, 650)
         self.text(myText, "Current:", 498, 519.5)
-        self.text(myText, "Start X:", 500, 536.5)
-        self.text(myText, "Start Y:", 500, 548.5)
-        self.text(myText, "Start Z:", 500, 560.5)
-        self.text(myText, "End X:", 502, 578.5)
-        self.text(myText, "End Y:", 502, 591)
-        self.text(myText, "End Z:", 502, 603.5)
-        self.text(myText, "Loop Radius:", 485, 621.5)
-        self.text(myText, "Number of Turns:", 473, 633.5)
-        self.text(myText, "Major Radius:", 483, 651.5)
+        self.text(myText, "Start X:", 498, 537.5)
+        self.text(myText, "Start Y:", 498, 549.5)
+        self.text(myText, "Start Z:", 498, 562.5)
+        self.text(myText, "End X:", 505, 581.5)
+        self.text(myText, "End Y:", 505, 594.5)
+        self.text(myText, "End Z:", 505, 607.5)
+        self.text(myText, "Loop Radius:", 484, 624)
+        self.text(myText, "Number of Turns:", 470, 637)
+        self.text(myText, "Major Radius:", 480, 655.5)
 
     def solenoid(self, startx, starty):
         pygame.draw.line(self.sur, (0, 0, 0), (startx - 5, starty + 10), (startx, starty + 10), 3)
@@ -63,7 +75,5 @@ class UserInterface:
         letterRect = letter.get_rect()
         letterRect.center = (centerX, centerY)
         self.sur.blit(letter, letterRect)
-        pygame.draw.rect(self.sur, (0, 0, 0), pygame.Rect(len(text)*2.5 + centerX + 4, centerY - 5.5, 32, 14), 0)
-        pygame.draw.rect(self.sur, (255, 255, 255), pygame.Rect(len(text)*2.5 + centerX + 5, centerY - 4.5, 30, 12), 0)
-
-#class TextBox:
+        DaBox = TextBox(centerX, centerY, text, self.sur)
+        DaBox.draw()
