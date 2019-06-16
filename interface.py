@@ -6,8 +6,8 @@ class TextBox:
         self.centerX = cx
         self.centerY = cy
         self.label_text = tex
-        self.value_text = ""
         self.sur = surface
+        self.boxText =""
         self.font = font
         self.active = False
         
@@ -17,19 +17,29 @@ class TextBox:
         letterRect.center = (self.centerX, self.centerY)
         self.sur.blit(letter, letterRect)
         
-        if(self.active):
-            pygame.draw.rect(self.sur, (0, 0, 0), pygame.Rect(len(self.label_text)*3.6 + self.centerX + 4, self.centerY - 7, 32, 14), 0)
-        pygame.draw.rect(self.sur, (255, 255, 255), pygame.Rect(len(self.label_text)*3.6 + self.centerX + 5, self.centerY - 6, 30, 12), 0)
+        textHolder = pygame.Rect(len(self.label_text)*3.6 + self.centerX + 5, self.centerY - 6, 30, 12)
+        pygame.draw.rect(self.sur, (255,0,0)if self.active else(0, 0, 0), pygame.Rect(len(self.label_text)*3.6 + self.centerX + 4, self.centerY - 7, 32, 14), 0)
+        pygame.draw.rect(self.sur, (255, 255, 255), textHolder, 0)
+        number = self.font.render(self.boxText, True, (0, 0, 0))
+        numberRect = number.get_rect()
+        numberRect.center = textHolder.center
+        self.sur.blit(number, textHolder)
+
     def key(self,key):
         self.value_text+=key
     def clicked(self,x,y):
-        self.active = len(self.label_text)*3.6 +self.centerX-12 < x < len(self.label_text)*3.6 +self.centerX+20 and self.centerY-6 <  y < self.centerY+6
+        self.active = len(self.label_text)*3.6 +self.centerX-28 < x < len(self.label_text)*3.6 +self.centerX+36 and self.centerY-6 <  y < self.centerY+6
         return self.active
-class UserInterface:
-    def __init__(self, surf):
-        self.sur = surf
-        self.font = pygame.font.Font('cour.ttf', 12)
 
+class UserInterface:
+    def __init__(self, surf, field, px, py, pz):
+        self.sur = surf
+        self.f = "%4.2f" % field
+        self.x = px
+        self.y = py
+        self.z = pz
+        self.textBoxes = []
+        self.font = pygame.font.Font('cour.ttf', 12)
         self.texts=[TextBox(17,590,"X:", self.sur, self.font),
                     TextBox(17, 620,"Y:",self.sur, self.font),
                     TextBox(17, 650,"Z:",self.sur, self.font),
@@ -53,14 +63,15 @@ class UserInterface:
         pygame.draw.line(self.sur, (0, 0, 0), (615, 543), (645, 543), 3)
         self.solenoid(620, 586)
         #self.toroid(620, 629)
-        myB = self.font.render('42.16', True, (0, 0, 0))
+        myText = self.font
+        myB = myText.render(str(self.f), True, (0, 0, 0))
         bRect = myB.get_rect()
-        bRect.center = (40, 527.5)
-        letterB = self.font.render('B:', True, (0, 0, 0))
+        bRect.center = (41.5, 527.5)
+        letterB = myText.render('B:', True, (0, 0, 0))
         letterRect = letterB.get_rect()
         letterRect.center = (17, 527.5)
-        pygame.draw.rect(self.sur, (0, 0, 0), pygame.Rect(24, 519, 32, 17), 0)
-        pygame.draw.rect(self.sur, (255, 255, 255), pygame.Rect(25, 520, 30, 15), 0)
+        pygame.draw.rect(self.sur, (0, 0, 0), pygame.Rect(24, 518, 36, 17), 0)
+        pygame.draw.rect(self.sur, (255, 255, 255), pygame.Rect(25, 519, 34, 15), 0)
         self.sur.blit(myB, bRect)
         self.sur.blit(letterB, letterRect)
         for i in self.texts:
@@ -96,10 +107,14 @@ class UserInterface:
                 container = pygame.Rect(round(startx + 5 * cos(i * pi / 4)), round(starty + 5 * sin(i * pi / 4)), round(5 * cos(i * pi / 4)), 5)
                 pygame.draw.ellipse(self.sur, (0, 0, 0), container, 1)
 
-#    def text(self, font, text, centerX, centerY):
-#        letter = font.render(text, True, (0, 0, 0))
-#        letterRect = letter.get_rect()
-#        letterRect.center = (centerX, centerY)
-#        self.sur.blit(letter, letterRect)
-#        DaBox = TextBox(centerX, centerY, text, self.sur)
-#        DaBox.draw()
+    def text(self, font, text, boxText, centerX, centerY):
+        letter = font.render(text, True, (0, 0, 0))
+        letterRect = letter.get_rect()
+        letterRect.center = (centerX, centerY)
+        self.sur.blit(letter, letterRect)
+        DaBox = TextBox(centerX, centerY, text, boxText, self.sur, font)
+        DaBox.draw()
+        self.textBoxes += [DaBox]
+    
+    def returnTextBoxes(self):
+        return self.textBoxes
