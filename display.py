@@ -6,7 +6,7 @@ import pygame.locals
 from matrix import Etrx
 from interface import UserInterface
 
-movs=(pygame.K_ESCAPE, pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d, pygame.K_UP, pygame.K_LEFT, pygame.K_DOWN, pygame.K_RIGHT, pygame.K_SPACE, pygame.K_q)
+movs=(pygame.K_ESCAPE, pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d, pygame.K_UP, pygame.K_LEFT, pygame.K_DOWN, pygame.K_RIGHT, pygame.K_SPACE, pygame.K_q,pygame.K_1,pygame.K_2,pygame.K_3,pygame.K_4,pygame.K_5,pygame.K_6,pygame.K_7,pygame.K_8,pygame.K_9)
 
 def get_textures(filename):
     m = pygame.image.load("textures/" + filename + ".png")
@@ -156,7 +156,7 @@ if __name__ == '__main__':
     m1 = False
     UI = UserInterface(screen)
 
-    wr=[] #[current,start,end] '''[100,[0,0,-50],[0,0,50]]'''
+    wr=[[100,[0,0,-50],[0,0,50]]] #[current,start,end] '''[100,[0,0,-50],[0,0,50]]'''
     sl=[[1,[0,-50,0],[0,50,0],5,50]] #[current,start,end,num_turns,radius]
     tl=[]
     bis,bia,rndrwrsgmr,vlenmax=bf(wr,sl,tl)
@@ -186,6 +186,11 @@ if __name__ == '__main__':
             clicked = True
             dragging = False
             pygame.mouse.get_rel()
+            
+        if (615 <= pygame.mouse.get_pos()[0] <= 645 and 538 <= pygame.mouse.get_pos()[1] <= 548) or (615 <= pygame.mouse.get_pos()[0] <= 645 and 586 <= pygame.mouse.get_pos()[1] <= 606):
+            pygame.mouse.set_cursor(*pygame.cursors.broken_x)
+        else:
+            pygame.mouse.set_cursor(*pygame.cursors.arrow)
         if(dragging):
             dryrx=pygame.mouse.get_rel()
             ry+=dryrx[0]

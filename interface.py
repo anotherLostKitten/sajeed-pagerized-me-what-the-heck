@@ -23,6 +23,9 @@ class UserInterface:
         pygame.draw.rect(self.sur, (255, 255, 255), pygame.Rect(25, 520, 30, 15), 0)
         self.sur.blit(myB, bRect)
         self.sur.blit(letterB, letterRect)
+        self.text(myText, "X:", 17, 590)
+        self.text(myText, "Y:", 17, 620)
+        self.text(myText, "Z:", 17, 650)
         self.text(myText, "Current:", 498, 516.5)
         self.text(myText, "Start X:", 500, 532.5)
         self.text(myText, "Start Y:", 500, 544.5)
@@ -60,3 +63,7 @@ class UserInterface:
         letterRect = letter.get_rect()
         letterRect.center = (centerX, centerY)
         self.sur.blit(letter, letterRect)
+        pygame.draw.rect(self.sur, (0, 0, 0), pygame.Rect(len(text)*2.5 + centerX + 4, centerY - 5.5, 32, 14), 0)
+        pygame.draw.rect(self.sur, (255, 255, 255), pygame.Rect(len(text)*2.5 + centerX + 5, centerY - 4.5, 30, 12), 0)
+
+class TextBox:
