@@ -26,7 +26,7 @@ class TextBox:
         self.sur.blit(number, textHolder)
 
     def key(self,key):
-        self.value_text+=key
+        self.boxText+=key
     def clicked(self,x,y):
         self.active = len(self.label_text)*3.6 +self.centerX-28 < x < len(self.label_text)*3.6 +self.centerX+36 and self.centerY-6 <  y < self.centerY+6
         return self.active
@@ -77,7 +77,7 @@ class UserInterface:
         for i in self.texts:
             i.draw()
     def key(self,key):
-        if active_text != -1:
+        if self.active_text != -1:
             if key in"0123456789.":
                 self.texts[self.active_text].key(key)
             elif key=="":

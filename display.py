@@ -213,7 +213,7 @@ if __name__ == '__main__':
             if e.type == pygame.locals.QUIT:
                 playin = False
             elif e.type == pygame.locals.KEYDOWN:
-                print(chr(e.key))
+                UI.key(chr(e.key))
         if(pygame.mouse.get_pressed()[0]):
             if (pygame.mouse.get_pos()[1] <= 509):
                 if(clicked):
