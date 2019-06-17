@@ -53,7 +53,7 @@ class UserInterface:
     def __init__(self, surf, field, px, py, pz):
         self.sur = surf
         self.f = "%4.2f" % field
-        self.font = pygame.font.Font(pygame.font.get_default_font(), 12)
+        self.font = pygame.font.Font('cour.ttf', 12)
         self.texts=[TextBox(17, 590,"X:", self.sur, self.font),
                     TextBox(17, 620,"Y:",self.sur, self.font),
                     TextBox(17, 650,"Z:",self.sur, self.font),
