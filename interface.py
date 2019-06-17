@@ -40,15 +40,15 @@ class TextBox:
         self.active = len(self.label_text)*3.6 +self.centerX-28 < x < len(self.label_text)*3.6 +self.centerX+36 and self.centerY-6 <  y < self.centerY+6
         return self.active
     def val(self):
-        return float(self.boxText)
+        try:
+            thing =float(self.boxText)
+        except ValueError:
+            thing = 0
+        return thing
 class UserInterface:
     def __init__(self, surf, field, px, py, pz):
         self.sur = surf
         self.f = "%4.2f" % field
-        self.x = px
-        self.y = py
-        self.z = pz
-        self.textBoxes = []
         self.font = pygame.font.Font('cour.ttf', 12)
         self.texts=[TextBox(17,590,"X:", self.sur, self.font),
                     TextBox(17, 620,"Y:",self.sur, self.font),
@@ -63,8 +63,15 @@ class UserInterface:
                     TextBox(484, 624,"Loop Radius:",self.sur, self.font),
                     TextBox(470,637,"Number of Turns:",self.sur, self.font),
                     TextBox(480, 655.5,"Major Radius:",self.sur, self.font)]
+        self.texts[0].boxText=str(px)
+        self.texts[1].boxText=str(py)
+        self.texts[2].boxText=str(pz)
         self.active_text = -1
         self.mode = []
+    def getlocal(self):
+        return (self.texts[0].val(),self.texts[1].val(),self.texts[2].val())
+    def setlocal(self,field):
+        self.f = "%4.2f" % field
     def draw(self):
         border = pygame.Rect(0, 500, 672, 172)
         pygame.draw.rect(self.sur, (200, 200, 200), border, 0)

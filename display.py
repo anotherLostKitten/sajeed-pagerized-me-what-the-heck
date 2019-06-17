@@ -204,6 +204,7 @@ if __name__ == '__main__':
     render_arrows_color(screen,bia,bis,ry,rx,(255,0,0),(0,0,255),vlenmax)
     print(vlenmax)
     while playin:
+        
         if (dragging):
             screen.fill((0,0,0))
             render_axes(screen,axis,ry,rx)
@@ -215,11 +216,15 @@ if __name__ == '__main__':
         UI.draw()
         pygame.display.flip()
         clock.tick(15)
+        iasdf=False
         for e in pygame.event.get():
             if e.type == pygame.locals.QUIT:
                 playin = False
             elif e.type == pygame.locals.KEYDOWN:
                 UI.key(chr(e.key))
+                iasdf=True
+        if iasdf:
+            UI.setlocal(localbf(things,*UI.getlocal()))
         if(pygame.mouse.get_pressed()[0]):
             if (pygame.mouse.get_pos()[1] <= 509):
                 if(clicked):
