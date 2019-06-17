@@ -1,6 +1,6 @@
 import pygame
 import pygame.locals
-from math import pi,sin,cos
+from math import pi,sin,cos,ceil
 
 class TextBox:
     def __init__(self, cx, cy, tex, surface, font):
@@ -17,9 +17,9 @@ class TextBox:
         letterRect = letter.get_rect()
         letterRect.center = (self.centerX, self.centerY)
         self.sur.blit(letter, letterRect)
-        
-        textHolder = pygame.Rect(len(self.label_text)*3.6 + self.centerX + 5, self.centerY - 6, 30, 12)
-        pygame.draw.rect(self.sur, (255,0,0)if self.active else(0, 0, 0), pygame.Rect(len(self.label_text)*3.6 + self.centerX + 4, self.centerY - 7, 32, 14), 0)
+        width, height = self.font.size(self.label_text)
+        textHolder = pygame.Rect(ceil(width / 2) + self.centerX + 5, self.centerY - 6, 30, 12)
+        pygame.draw.rect(self.sur, (255,0,0)if self.active else(0, 0, 0), pygame.Rect(ceil(width / 2) + self.centerX + 4, self.centerY - 7, 32, 14), 0)
         pygame.draw.rect(self.sur, (255, 255, 255), textHolder, 0)
         number = self.font.render(self.boxText, True, (0, 0, 0))
         numberRect = number.get_rect()
@@ -54,19 +54,18 @@ class UserInterface:
         self.sur = surf
         self.f = "%4.2f" % field
         self.font = pygame.font.Font(pygame.font.get_default_font(), 12)
-        self.texts=[TextBox(17,590,"X:", self.sur, self.font),
+        self.texts=[TextBox(17, 590,"X:", self.sur, self.font),
                     TextBox(17, 620,"Y:",self.sur, self.font),
                     TextBox(17, 650,"Z:",self.sur, self.font),
                     TextBox(498, 519.5,"Current:",self.sur, self.font),
-                    TextBox(498, 537.5,"Start X:",self.sur, self.font),
-                    TextBox(498, 549.5,"Start Y:",self.sur, self.font),
-                    TextBox(498, 562.5,"Start Z:",self.sur, self.font),
-                    TextBox(505, 581.5,"End X:",self.sur, self.font),
-                    TextBox(505, 594.5,"End Y:",self.sur, self.font),
-                    TextBox(505, 607.5,"End Z:",self.sur, self.font),
+                    TextBox(500, 537.5,"Start X:",self.sur, self.font),
+                    TextBox(500, 549.5,"Start Y:",self.sur, self.font),
+                    TextBox(501, 562.5,"Start Z:",self.sur, self.font),
+                    TextBox(503, 581.5,"End X:",self.sur, self.font),
+                    TextBox(503, 594.5,"End Y:",self.sur, self.font),
+                    TextBox(504, 607.5,"End Z:",self.sur, self.font),
                     TextBox(484, 624,"Loop Radius:",self.sur, self.font),
-                    TextBox(470,637,"Number of Turns:",self.sur, self.font),
-                    TextBox(480, 655.5,"Major Radius:",self.sur, self.font)]
+                    TextBox(472,637,"Number of Turns:",self.sur, self.font)]
         self.texts[0].boxText=str(px)
         self.texts[1].boxText=str(py)
         self.texts[2].boxText=str(pz)

@@ -270,6 +270,8 @@ if __name__ == '__main__':
             nextOne = turnToClicker(615, 645, 538, 548)
             if (not nextOne):
                 nextOne = turnToClicker(615, 645, 586, 606) or nextOne
+            if (not nextOne):
+                nextOne = turnToClicker(620, 640, 620, 640) or nextOne
             i = 0
             if (not nextOne):
                 while i < len(textBoxes):
