@@ -6,7 +6,7 @@ import pygame.locals
 from matrix import Etrx
 from interface import UserInterface, TextBox
 
-movs=(pygame.K_ESCAPE, pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d, pygame.K_UP, pygame.K_LEFT, pygame.K_DOWN, pygame.K_RIGHT, pygame.K_SPACE, pygame.K_q,pygame.K_1,pygame.K_2,pygame.K_3,pygame.K_4,pygame.K_5,pygame.K_6,pygame.K_7,pygame.K_8,pygame.K_9)
+movs=(pygame.K_ESCAPE, pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d, pygame.K_UP, pygame.K_LEFT, pygame.K_DOWN, pygame.K_RIGHT, pygame.K_SPACE, pygame.K_q,pygame.K_1,pygame.K_2,pygame.K_3,pygame.K_4,pygame.K_5,pygame.K_6,pygame.K_7,pygame.K_8,pygame.K_9,pygame.K_0,pygame.K_RETURN)
 
 def get_textures(filename):
     m = pygame.image.load("textures/" + filename + ".png")
@@ -161,13 +161,15 @@ def localbf(things,x, y, z):
     bbb=[bw[i]+bs[i]+bt[i]for i in(0,1,2)]
     return vlen(bbb)
 
-def turnToClicker(minX, maxX, minY, maxY):
+def turnToClicker(minX, maxX, minY, maxY):#, clicked):
     if (minX <= pygame.mouse.get_pos()[0] <= maxX and minY <= pygame.mouse.get_pos()[1] <= maxY):
         pygame.mouse.set_cursor(*pygame.cursors.broken_x)
-        return False
+        #if (pygame.mouse.get_pressed()[0] and not clicked):
+            #clicked = True
+        return True
     else:
         pygame.mouse.set_cursor(*pygame.cursors.arrow)
-        return True
+        return False
 
 if __name__ == '__main__':
     axis=Etrx()
@@ -203,6 +205,8 @@ if __name__ == '__main__':
 
     render_arrows_color(screen,bia,bis,ry,rx,(255,0,0),(0,0,255),vlenmax)
     print(vlenmax)
+    typing = False
+    typeClicked = False
     while playin:
         
         if (dragging):
@@ -221,16 +225,23 @@ if __name__ == '__main__':
             if e.type == pygame.locals.QUIT:
                 playin = False
             elif e.type == pygame.locals.KEYDOWN:
+                #if (e.key == pygame.K_RETURN):
+                    #typeClicked = False
+                #print(chr(e.key))
+
                 UI.key(chr(e.key))
                 iasdf=True
         if iasdf:
             UI.setlocal(localbf(things,*UI.getlocal()))
         if(pygame.mouse.get_pressed()[0]):
+            #value = value[0: len(value) - 1: 1]
             if (pygame.mouse.get_pos()[1] <= 509):
                 if(clicked):
                     dragging = True
             elif(clicked):
                 clicked = False
+            #if (typeClicked):
+                #typeClicked = False
                 new_thing=UI.click(*pygame.mouse.get_pos())
                 if new_thing!=None:
                     if new_thing[0]in("wire","sol","tyl"):
@@ -256,12 +267,18 @@ if __name__ == '__main__':
             rx+=dryrx[1]
             rx = -50 if rx < -50 else (50 if rx > 50 else rx)
         else:
-            if (turnToClicker(615, 645, 538, 548)):
-                if(turnToClicker(615, 645, 586, 606)):
-                    i = 0
-                    while i < len(textBoxes):
-                        if(turnToClicker(len(textBoxes[i].label_text)*3.6 + textBoxes[i].centerX + 4, len(textBoxes[i].label_text)*3.6 + textBoxes[i].centerX + 34, textBoxes[i].centerY - 7, textBoxes[i].centerY + 7)):
-                            i += 1
-                        else:
-                            i = len(textBoxes)
+            nextOne = turnToClicker(615, 645, 538, 548)
+            if (not nextOne):
+                nextOne = turnToClicker(615, 645, 586, 606) or nextOne
+            i = 0
+            if (not nextOne):
+                while i < len(textBoxes):
+                    nextOne = turnToClicker(len(textBoxes[i].label_text)*3.6 + textBoxes[i].centerX + 4, len(textBoxes[i].label_text)*3.6 + textBoxes[i].centerX + 34, textBoxes[i].centerY - 7, textBoxes[i].centerY + 7) or nextOne
+                    if (not nextOne):
+                        i += 1
+                    else:
+                        i = len(textBoxes)
+        #if (typeClicked):
+            #value = "7"
+        #print(value)
         pr = pygame.key.get_pressed()
