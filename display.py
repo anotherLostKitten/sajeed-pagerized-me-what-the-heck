@@ -208,7 +208,11 @@ if __name__ == '__main__':
     typing = False
     typeClicked = False
     while playin:
+<<<<<<< HEAD
         value = "6"
+=======
+        
+>>>>>>> 407547de69b6ea7c6d22dfcd8024ce91533990d1
         if (dragging):
             screen.fill((0,0,0))
             render_axes(screen,axis,ry,rx)
@@ -220,6 +224,7 @@ if __name__ == '__main__':
         UI.draw()
         pygame.display.flip()
         clock.tick(15)
+        iasdf=False
         for e in pygame.event.get():
             if e.type == pygame.locals.QUIT:
                 playin = False
@@ -229,6 +234,9 @@ if __name__ == '__main__':
                 #print(chr(e.key))
 
                 UI.key(chr(e.key))
+                iasdf=True
+        if iasdf:
+            UI.setlocal(localbf(things,*UI.getlocal()))
         if(pygame.mouse.get_pressed()[0]):
             #value = value[0: len(value) - 1: 1]
             if (pygame.mouse.get_pos()[1] <= 509):
