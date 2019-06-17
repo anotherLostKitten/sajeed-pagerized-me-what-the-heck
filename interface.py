@@ -34,7 +34,9 @@ class TextBox:
                 self.boxText=self.boxText[1:]
         else:
             self.boxText+=key
-        if len(self.boxText)>5:
+        if len(self.boxText)>4 and'.'not in self.boxText:
+            self.boxText=self.boxText[:4]
+        elif len(self.boxText)>5:
             self.boxText=self.boxText[:5]
     def delete(self):
         self.boxText=self.boxText[:-1]if self.boxText else""
