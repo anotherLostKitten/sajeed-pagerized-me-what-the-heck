@@ -208,11 +208,7 @@ if __name__ == '__main__':
     typing = False
     typeClicked = False
     while playin:
-<<<<<<< HEAD
-        value = "6"
-=======
         
->>>>>>> 407547de69b6ea7c6d22dfcd8024ce91533990d1
         if (dragging):
             screen.fill((0,0,0))
             render_axes(screen,axis,ry,rx)
