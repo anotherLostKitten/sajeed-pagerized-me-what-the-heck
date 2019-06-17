@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['display.py'],
-             pathex=['/home/a/phys/sajeed-pagerized-me-what-the-heck'],
+             pathex=['C:\\Users\\Jonah\\sajeed-pagerized-me-what-the-heck'],
              binaries=[],
              datas=[],
              hiddenimports=[],
