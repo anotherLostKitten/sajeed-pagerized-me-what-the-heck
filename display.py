@@ -38,7 +38,10 @@ def render_arrows_color(s,axia,axis,ry,rx,clr1,clr2,vlenmax):
             pygame.draw.polygon(s,clr,((m.m[i],m.m[i+1]),(m.m[i+j],m.m[i+j+1]),(m.m[i+(j+4)%28],m.m[i+(j+5)%28]) ))
         pygame.draw.polygon(s,clr,((m.m[i],m.m[i+1]),(m.m[i+24],m.m[i+25]),(m.m[i+4],m.m[i+5]) ))
         
-def get_arrow_head(b,e,pogm,scl):
+def get_arrow_head(b,e,pogm,scl,move=True):
+    d=[e[i]-b[i]for i in(0,1,2)]
+    if vlen(d)<0.000001:
+        return
     a=Etrx()
     a.p(0,0,0)
     a.p(-scl,0,-scl/4)
@@ -47,12 +50,11 @@ def get_arrow_head(b,e,pogm,scl):
     a.p(-scl,0,scl/4)
     a.p(-scl,scl*sqrt(3)/8,scl/8)
     a.p(-scl,scl*sqrt(3)/8,-scl/8)
-    d=[e[i]-b[i]for i in(0,1,2)]
     rz=atan2(d[1],d[0])*180/pi
     ry=atan2(d[2],d[0])*-180/pi
     if(b[0]>e[0]):
         ry+=180
-    pogm.m+=a.rot('z',rz).rot('y',ry).mov(*e).m
+    pogm.m+=a.rot('z',rz).rot('y',ry).mov(*e).m if move else a.rot('z',rz).rot('y',ry).mov(*b).m
 
 def dtp(u,v):
     return sum(u[i]*v[i] for i in range(len(u)))
@@ -79,7 +81,7 @@ def wire(p,w,rndrwrsgmr):
     return b
 def sol(p,s,rndrwrsgmr): #[current,start,end,num_turns,radius]
     b=[0,0,0]
-    k=20*s[3]
+    k=round(20*s[3])
     for i in range(k):
         a=Etrx()
         a.p(0,s[4]*cos(2*pi*i/k*s[3]),s[4]*sin(2*pi*i/k*s[3]))
@@ -111,7 +113,10 @@ def sol(p,s,rndrwrsgmr): #[current,start,end,num_turns,radius]
 def tyl(p,t,rndrwrsgmr):
     pass
 
-def bf(wr,sl,tl):
+def bf(things):
+    wr = [i[1]for i in things if i[0]=='wire']
+    sl = [i[1]for i in things if i[0]=='sol']
+    tl = [i[1]for i in things if i[0]=='tyl']
     bis=Etrx()
     bia=Etrx()
     rndrwrsgmr=Etrx()
@@ -133,10 +138,13 @@ def bf(wr,sl,tl):
                     vlenmax=vlen(bbb)
                 bv=(x,y,z),[(x,y,z)[i]+bbb[i]for i in(0,1,2)]
                 bis.e(*bv)
-                get_arrow_head(*bv,bia,4)
+                get_arrow_head(*bv,bia,4,False)
     return(bis,bia,rndrwrsgmr,vlenmax)
 
-def localbf(wr,sl,tl,x, y, z):
+def localbf(things,x, y, z):
+    wr = [i[1]for i in things if i[0]=='wire']
+    sl = [i[1]for i in things if i[0]=='sol']
+    tl = [i[1]for i in things if i[0]=='tyl']
     bis=Etrx()
     bia=Etrx()
     rndrwrsgmr=Etrx()
@@ -153,15 +161,15 @@ def localbf(wr,sl,tl,x, y, z):
     bbb=[bw[i]+bs[i]+bt[i]for i in(0,1,2)]
     return vlen(bbb)
 
-def turnToClicker(minX, maxX, minY, maxY, clicked):
+def turnToClicker(minX, maxX, minY, maxY):#, clicked):
     if (minX <= pygame.mouse.get_pos()[0] <= maxX and minY <= pygame.mouse.get_pos()[1] <= maxY):
         pygame.mouse.set_cursor(*pygame.cursors.broken_x)
-        if (pygame.mouse.get_pressed()[0] and not clicked):
-            clicked = True
-        return (True, clicked)
+        #if (pygame.mouse.get_pressed()[0] and not clicked):
+            #clicked = True
+        #return (True, clicked)
     else:
         pygame.mouse.set_cursor(*pygame.cursors.arrow)
-        return (False, clicked)
+        #return (False, clicked)
 
 if __name__ == '__main__':
     axis=Etrx()
@@ -182,21 +190,19 @@ if __name__ == '__main__':
     rx=5
     m1 = False
 
-    wr=[[100,[0,0,-50],[0,0,50]]] #[current,start,end] '''[100,[0,0,-50],[0,0,50]]'''
-    sl=[[1,[0,-50,0],[0,50,0],5,50]] #[current,start,end,num_turns,radius]
-    tl=[]
-    UI = UserInterface(screen, localbf(wr,sl,tl,5, 5, 5), 5, 5, 5)
+    things=[['wire',[100,[0,0,-50],[0,0,50]]]] #[current,start,end] '''[100,[0,0,-50],[0,0,50]]'''
+
+    UI = UserInterface(screen, localbf(things,5, 5, 5), 5, 5, 5)
     textBoxes = UI.returnTextBoxes()
-    bis,bia,rndrwrsgmr,vlenmax=bf(wr,sl,tl)
     dragging = False
+    
+    bis,bia,rndrwrsgmr,vlenmax=bf(things)
     screen.fill((0,0,0))
     render_axes(screen,axis,ry,rx)
     render_arrows(screen,axia,ry,rx)
 
     render_axes(screen,rndrwrsgmr,ry,rx,(0,255,0))
 
-    render_axes(screen,bis,ry,rx,(255,0,0))
-    bis,bia,rndrwrsgmr,vlenmax=bf(wr,sl,tl)
     render_arrows_color(screen,bia,bis,ry,rx,(255,0,0),(0,0,255),vlenmax)
     print(vlenmax)
     typing = False
@@ -218,10 +224,11 @@ if __name__ == '__main__':
             if e.type == pygame.locals.QUIT:
                 playin = False
             elif e.type == pygame.locals.KEYDOWN:
-                if (e.key == pygame.K_RETURN):
-                    typeClicked = False
-                print(chr(e.key))
+                #if (e.key == pygame.K_RETURN):
+                    #typeClicked = False
+                #print(chr(e.key))
 
+                UI.key(chr(e.key))
         if(pygame.mouse.get_pressed()[0]):
             #value = value[0: len(value) - 1: 1]
             if (pygame.mouse.get_pos()[1] <= 509):
@@ -229,8 +236,22 @@ if __name__ == '__main__':
                     dragging = True
             elif(clicked):
                 clicked = False
-            if (typeClicked):
-                typeClicked = False
+            #if (typeClicked):
+                #typeClicked = False
+                new_thing=UI.click(*pygame.mouse.get_pos())
+                if new_thing!=None:
+                    if new_thing[0]in("wire","sol","tyl"):
+                        things.append(new_thing)
+                    elif new_thing[0]=="del" and len(things)>0:
+                        things.pop()
+                    bis,bia,rndrwrsgmr,vlenmax=bf(things)
+                    screen.fill((0,0,0))
+                    render_axes(screen,axis,ry,rx)
+                    render_arrows(screen,axia,ry,rx)
+
+                    render_axes(screen,rndrwrsgmr,ry,rx,(0,255,0))
+                    
+                    render_arrows_color(screen,bia,bis,ry,rx,(255,0,0),(0,0,255),vlenmax)
         else:
             clicked = True
             dragging = False
@@ -242,20 +263,28 @@ if __name__ == '__main__':
             rx+=dryrx[1]
             rx = -50 if rx < -50 else (50 if rx > 50 else rx)
         else:
-            (nextOne, typeClicked) = turnToClicker(615, 645, 538, 548, typeClicked)
-            if (not nextOne):
-                (nextOne, typeClicked) = turnToClicker(615, 645, 586, 606, typeClicked) or (nextOne, typeClicked)
-            i = 0
-            if (not nextOne):
-                while i < len(textBoxes):
-                    (nextOne, typeClicked) = turnToClicker(len(textBoxes[i].text)*3.6 + textBoxes[i].centerX + 4, len(textBoxes[i].text)*3.6 + textBoxes[i].centerX + 34, textBoxes[i].centerY - 7, textBoxes[i].centerY + 7, typeClicked) or (nextOne, typeClicked)
-                    if (not nextOne):
-                        i += 1
-                    else:
-                        i = len(textBoxes)
-            else:
-                typing = True
-        if (typeClicked):
-            value = "7"
-        print(value)
+            #(nextOne, typeClicked) = turnToClicker(615, 645, 538, 548, typeClicked)
+            #if (not nextOne):
+                #(nextOne, typeClicked) = turnToClicker(615, 645, 586, 606, typeClicked) or (nextOne, typeClicked)
+            #i = 0
+            #if (not nextOne):
+                #while i < len(textBoxes):
+                    #(nextOne, typeClicked) = turnToClicker(len(textBoxes[i].text)*3.6 + textBoxes[i].centerX + 4, len(textBoxes[i].text)*3.6 + textBoxes[i].centerX + 34, textBoxes[i].centerY - 7, textBoxes[i].centerY + 7, typeClicked) or (nextOne, typeClicked)
+                    #if (not nextOne):
+                        #i += 1
+                    #else:
+                        #i = len(textBoxes)
+            #else:
+                #typing = True
+        #if (typeClicked):
+            #value = "7"
+        #print(value)
+            if (turnToClicker(615, 645, 538, 548)):
+                if(turnToClicker(615, 645, 586, 606)):
+                    i = 0
+                    while i < len(textBoxes):
+                        if(turnToClicker(len(textBoxes[i].label_text)*3.6 + textBoxes[i].centerX + 4, len(textBoxes[i].label_text)*3.6 + textBoxes[i].centerX + 34, textBoxes[i].centerY - 7, textBoxes[i].centerY + 7)):
+                            i += 1
+                        else:
+                            i = len(textBoxes)
         pr = pygame.key.get_pressed()
