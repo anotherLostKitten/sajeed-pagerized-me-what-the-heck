@@ -38,7 +38,7 @@ def render_arrows_color(s,axia,axis,ry,rx,clr1,clr2,vlenmax):
             pygame.draw.polygon(s,clr,((m.m[i],m.m[i+1]),(m.m[i+j],m.m[i+j+1]),(m.m[i+(j+4)%28],m.m[i+(j+5)%28]) ))
         pygame.draw.polygon(s,clr,((m.m[i],m.m[i+1]),(m.m[i+24],m.m[i+25]),(m.m[i+4],m.m[i+5]) ))
         
-def get_arrow_head(b,e,pogm,scl):
+def get_arrow_head(b,e,pogm,scl,move=True):
     a=Etrx()
     a.p(0,0,0)
     a.p(-scl,0,-scl/4)
@@ -52,7 +52,7 @@ def get_arrow_head(b,e,pogm,scl):
     ry=atan2(d[2],d[0])*-180/pi
     if(b[0]>e[0]):
         ry+=180
-    pogm.m+=a.rot('z',rz).rot('y',ry).mov(*e).m
+    pogm.m+=a.rot('z',rz).rot('y',ry).mov(*e).m if move else a.rot('z',rz).rot('y',ry).mov(*b).m
 
 def dtp(u,v):
     return sum(u[i]*v[i] for i in range(len(u)))
@@ -79,7 +79,7 @@ def wire(p,w,rndrwrsgmr):
     return b
 def sol(p,s,rndrwrsgmr): #[current,start,end,num_turns,radius]
     b=[0,0,0]
-    k=20*s[3]
+    k=round(20*s[3])
     for i in range(k):
         a=Etrx()
         a.p(0,s[4]*cos(2*pi*i/k*s[3]),s[4]*sin(2*pi*i/k*s[3]))
@@ -133,7 +133,7 @@ def bf(wr,sl,tl):
                     vlenmax=vlen(bbb)
                 bv=(x,y,z),[(x,y,z)[i]+bbb[i]for i in(0,1,2)]
                 bis.e(*bv)
-                get_arrow_head(*bv,bia,4)
+                get_arrow_head(*bv,bia,4,False)
     return(bis,bia,rndrwrsgmr,vlenmax)
 
 def localbf(wr,sl,tl,x, y, z):
@@ -185,16 +185,15 @@ if __name__ == '__main__':
     tl=[]
     UI = UserInterface(screen, localbf(wr,sl,tl,5, 5, 5), 5, 5, 5)
     textBoxes = UI.returnTextBoxes()
-    bis,bia,rndrwrsgmr,vlenmax=bf(wr,sl,tl)
     dragging = False
+    
+    bis,bia,rndrwrsgmr,vlenmax=bf(wr,sl,tl)
     screen.fill((0,0,0))
     render_axes(screen,axis,ry,rx)
     render_arrows(screen,axia,ry,rx)
 
     render_axes(screen,rndrwrsgmr,ry,rx,(0,255,0))
 
-    render_axes(screen,bis,ry,rx,(255,0,0))
-    bis,bia,rndrwrsgmr,vlenmax=bf(wr,sl,tl)
     render_arrows_color(screen,bia,bis,ry,rx,(255,0,0),(0,0,255),vlenmax)
     print(vlenmax)
     while playin:
@@ -220,7 +219,21 @@ if __name__ == '__main__':
                     dragging = True
             elif(clicked):
                 clicked = False
-                UI.click(*pygame.mouse.get_pos())
+                new_thing=UI.click(*pygame.mouse.get_pos())
+                if new_thing!=None:
+                    if new_thing[0]=="wire":
+                        wr.append(new_thing[1])
+                    elif new_thing[0]=="sol":
+                        sl.append(new_thing[1])
+                        print(sl)
+                    bis,bia,rndrwrsgmr,vlenmax=bf(wr,sl,tl)
+                    screen.fill((0,0,0))
+                    render_axes(screen,axis,ry,rx)
+                    render_arrows(screen,axia,ry,rx)
+
+                    render_axes(screen,rndrwrsgmr,ry,rx,(0,255,0))
+                    
+                    render_arrows_color(screen,bia,bis,ry,rx,(255,0,0),(0,0,255),vlenmax)
         else:
             clicked = True
             dragging = False
@@ -236,7 +249,7 @@ if __name__ == '__main__':
                 if(turnToClicker(615, 645, 586, 606)):
                     i = 0
                     while i < len(textBoxes):
-                        if(turnToClicker(len(textBoxes[i].text)*3.6 + textBoxes[i].centerX + 4, len(textBoxes[i].text)*3.6 + textBoxes[i].centerX + 34, textBoxes[i].centerY - 7, textBoxes[i].centerY + 7)):
+                        if(turnToClicker(len(textBoxes[i].label_text)*3.6 + textBoxes[i].centerX + 4, len(textBoxes[i].label_text)*3.6 + textBoxes[i].centerX + 34, textBoxes[i].centerY - 7, textBoxes[i].centerY + 7)):
                             i += 1
                         else:
                             i = len(textBoxes)

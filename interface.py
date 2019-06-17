@@ -1,4 +1,5 @@
 import pygame
+import pygame.locals
 from math import pi,sin,cos
 
 class TextBox:
@@ -26,11 +27,20 @@ class TextBox:
         self.sur.blit(number, textHolder)
 
     def key(self,key):
-        self.boxText+=key
+        if key=="-":
+            if self.boxText==""or self.boxText[0]!="-":
+                self.boxText="-"+self.boxText
+            else:
+                self.boxText=self.boxText[1:]
+        else:
+            self.boxText+=key
+    def delete(self):
+        self.boxText=self.boxText[:-1]if self.boxText else""
     def clicked(self,x,y):
         self.active = len(self.label_text)*3.6 +self.centerX-28 < x < len(self.label_text)*3.6 +self.centerX+36 and self.centerY-6 <  y < self.centerY+6
         return self.active
-
+    def val(self):
+        return float(self.boxText)
 class UserInterface:
     def __init__(self, surf, field, px, py, pz):
         self.sur = surf
@@ -78,14 +88,25 @@ class UserInterface:
             i.draw()
     def key(self,key):
         if self.active_text != -1:
-            if key in"0123456789.":
+            if key in"0123456789.-":
                 self.texts[self.active_text].key(key)
-            elif key=="":
-                pass
+            elif key=="\b":
+                self.texts[self.active_text].delete()
+            elif key=="\r":
+                self.texts[self.active_text].active=False
+                self.active_text+=1
+                if self.active_text==len(self.texts):
+                    self.active_texts=-1
+                else:
+                    self.texts[self.active_text].active=True
     def click(self,x,y):
         ts=[i for i in range(len(self.texts))if self.texts[i].clicked(x,y)]
-        self.active_text=ts[0]if ts else-1
-        print(self.active_text)
+        self.active_text=ts[0]if ts else-1        
+        if 615<x<645 and 538<y<548: # wire
+            return ['wire',[self.texts[3].val(),[self.texts[4].val(),self.texts[5].val(),self.texts[6].val()],[self.texts[7].val(),self.texts[8].val(),self.texts[9].val()]]]
+        elif 615<x<645 and 586<y<606: # solenoid
+            return ['sol',[self.texts[3].val(),[self.texts[4].val(),self.texts[5].val(),self.texts[6].val()],[self.texts[7].val(),self.texts[8].val(),self.texts[9].val()],self.texts[11].val(),self.texts[10].val()]]
+        return None
     def solenoid(self, startx, starty):
         pygame.draw.line(self.sur, (0, 0, 0), (startx - 5, starty + 10), (startx, starty + 10), 3)
         for i in range(3):
@@ -106,15 +127,6 @@ class UserInterface:
                 print(round(5 * cos(i * pi / 4)))
                 container = pygame.Rect(round(startx + 5 * cos(i * pi / 4)), round(starty + 5 * sin(i * pi / 4)), round(5 * cos(i * pi / 4)), 5)
                 pygame.draw.ellipse(self.sur, (0, 0, 0), container, 1)
-
-    def text(self, font, text, boxText, centerX, centerY):
-        letter = font.render(text, True, (0, 0, 0))
-        letterRect = letter.get_rect()
-        letterRect.center = (centerX, centerY)
-        self.sur.blit(letter, letterRect)
-        DaBox = TextBox(centerX, centerY, text, boxText, self.sur, font)
-        DaBox.draw()
-        self.textBoxes += [DaBox]
     
     def returnTextBoxes(self):
-        return self.textBoxes
+        return self.texts
