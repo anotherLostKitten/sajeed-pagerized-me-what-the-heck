@@ -34,6 +34,10 @@ class TextBox:
                 self.boxText=self.boxText[1:]
         else:
             self.boxText+=key
+        if len(self.boxText)>4 and'.'not in self.boxText:
+            self.boxText=self.boxText[:4]
+        elif len(self.boxText)>5:
+            self.boxText=self.boxText[:5]
     def delete(self):
         self.boxText=self.boxText[:-1]if self.boxText else""
     def clicked(self,x,y):
@@ -49,7 +53,7 @@ class UserInterface:
     def __init__(self, surf, field, px, py, pz):
         self.sur = surf
         self.f = "%4.2f" % field
-        self.font = pygame.font.Font('cour.ttf', 12)
+        self.font = pygame.font.Font(pygame.font.get_default_font(), 12)
         self.texts=[TextBox(17,590,"X:", self.sur, self.font),
                     TextBox(17, 620,"Y:",self.sur, self.font),
                     TextBox(17, 650,"Z:",self.sur, self.font),
@@ -72,6 +76,8 @@ class UserInterface:
         return (self.texts[0].val(),self.texts[1].val(),self.texts[2].val())
     def setlocal(self,field):
         self.f = "%4.2f" % field
+        if len(self.f)>5:
+            self.f=self.f[:5]
     def draw(self):
         border = pygame.Rect(0, 500, 672, 172)
         pygame.draw.rect(self.sur, (200, 200, 200), border, 0)
