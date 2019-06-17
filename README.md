@@ -8,6 +8,6 @@ The magnetic field is determined by integrating with the law of Biot–Savart. T
 
 The view can be moved by dragging in the view window, and the magnetude of the magnetic field at a specific point can be seen by entering coordinates into the X, Y, and Z text fields.
 
-Similairly, to add a new magnetic element to the simulation, the relavent information should be inputted into the text fields to the right of the wire and solenoid buttons, and then the buttons should be clicked.
+Similairly, to add a new magnetic element to the simulation, the relevant information should be inputted into the text fields to the right of the wire and solenoid buttons, and then the buttons should be clicked.
 
 The red X will delete the last element added.
