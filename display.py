@@ -166,10 +166,10 @@ def turnToClicker(minX, maxX, minY, maxY):#, clicked):
         pygame.mouse.set_cursor(*pygame.cursors.broken_x)
         #if (pygame.mouse.get_pressed()[0] and not clicked):
             #clicked = True
-        #return (True, clicked)
+        return True
     else:
         pygame.mouse.set_cursor(*pygame.cursors.arrow)
-        #return (False, clicked)
+        return False
 
 if __name__ == '__main__':
     axis=Etrx()
@@ -267,28 +267,18 @@ if __name__ == '__main__':
             rx+=dryrx[1]
             rx = -50 if rx < -50 else (50 if rx > 50 else rx)
         else:
-            #(nextOne, typeClicked) = turnToClicker(615, 645, 538, 548, typeClicked)
-            #if (not nextOne):
-                #(nextOne, typeClicked) = turnToClicker(615, 645, 586, 606, typeClicked) or (nextOne, typeClicked)
-            #i = 0
-            #if (not nextOne):
-                #while i < len(textBoxes):
-                    #(nextOne, typeClicked) = turnToClicker(len(textBoxes[i].text)*3.6 + textBoxes[i].centerX + 4, len(textBoxes[i].text)*3.6 + textBoxes[i].centerX + 34, textBoxes[i].centerY - 7, textBoxes[i].centerY + 7, typeClicked) or (nextOne, typeClicked)
-                    #if (not nextOne):
-                        #i += 1
-                    #else:
-                        #i = len(textBoxes)
-            #else:
-                #typing = True
+            nextOne = turnToClicker(615, 645, 538, 548)
+            if (not nextOne):
+                nextOne = turnToClicker(615, 645, 586, 606) or nextOne
+            i = 0
+            if (not nextOne):
+                while i < len(textBoxes):
+                    nextOne = turnToClicker(len(textBoxes[i].label_text)*3.6 + textBoxes[i].centerX + 4, len(textBoxes[i].label_text)*3.6 + textBoxes[i].centerX + 34, textBoxes[i].centerY - 7, textBoxes[i].centerY + 7) or nextOne
+                    if (not nextOne):
+                        i += 1
+                    else:
+                        i = len(textBoxes)
         #if (typeClicked):
             #value = "7"
         #print(value)
-            if (turnToClicker(615, 645, 538, 548)):
-                if(turnToClicker(615, 645, 586, 606)):
-                    i = 0
-                    while i < len(textBoxes):
-                        if(turnToClicker(len(textBoxes[i].label_text)*3.6 + textBoxes[i].centerX + 4, len(textBoxes[i].label_text)*3.6 + textBoxes[i].centerX + 34, textBoxes[i].centerY - 7, textBoxes[i].centerY + 7)):
-                            i += 1
-                        else:
-                            i = len(textBoxes)
         pr = pygame.key.get_pressed()
