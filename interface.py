@@ -71,6 +71,8 @@ class UserInterface:
         ui = pygame.Rect(10, 510, 652, 152)
         pygame.draw.rect(self.sur, (230, 230, 230), ui, 0)
         pygame.draw.line(self.sur, (0, 0, 0), (615, 543), (645, 543), 3)
+        pygame.draw.line(self.sur, (120, 0, 0), (620,620),(640,640), 3)
+        pygame.draw.line(self.sur, (120, 0, 0), (620,640),(640,620), 3)
         self.solenoid(620, 586)
         #self.toroid(620, 629)
         myText = self.font
@@ -106,6 +108,8 @@ class UserInterface:
             return ['wire',[self.texts[3].val(),[self.texts[4].val(),self.texts[5].val(),self.texts[6].val()],[self.texts[7].val(),self.texts[8].val(),self.texts[9].val()]]]
         elif 615<x<645 and 586<y<606: # solenoid
             return ['sol',[self.texts[3].val(),[self.texts[4].val(),self.texts[5].val(),self.texts[6].val()],[self.texts[7].val(),self.texts[8].val(),self.texts[9].val()],self.texts[11].val(),self.texts[10].val()]]
+        elif 620<x<640 and 620<y<640:
+            return ['del']
         return None
     def solenoid(self, startx, starty):
         pygame.draw.line(self.sur, (0, 0, 0), (startx - 5, starty + 10), (startx, starty + 10), 3)

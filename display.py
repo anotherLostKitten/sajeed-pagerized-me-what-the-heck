@@ -39,6 +39,9 @@ def render_arrows_color(s,axia,axis,ry,rx,clr1,clr2,vlenmax):
         pygame.draw.polygon(s,clr,((m.m[i],m.m[i+1]),(m.m[i+24],m.m[i+25]),(m.m[i+4],m.m[i+5]) ))
         
 def get_arrow_head(b,e,pogm,scl,move=True):
+    d=[e[i]-b[i]for i in(0,1,2)]
+    if vlen(d)<0.000001:
+        return
     a=Etrx()
     a.p(0,0,0)
     a.p(-scl,0,-scl/4)
@@ -47,7 +50,6 @@ def get_arrow_head(b,e,pogm,scl,move=True):
     a.p(-scl,0,scl/4)
     a.p(-scl,scl*sqrt(3)/8,scl/8)
     a.p(-scl,scl*sqrt(3)/8,-scl/8)
-    d=[e[i]-b[i]for i in(0,1,2)]
     rz=atan2(d[1],d[0])*180/pi
     ry=atan2(d[2],d[0])*-180/pi
     if(b[0]>e[0]):
@@ -111,7 +113,10 @@ def sol(p,s,rndrwrsgmr): #[current,start,end,num_turns,radius]
 def tyl(p,t,rndrwrsgmr):
     pass
 
-def bf(wr,sl,tl):
+def bf(things):
+    wr = [i[1]for i in things if i[0]=='wire']
+    sl = [i[1]for i in things if i[0]=='sol']
+    tl = [i[1]for i in things if i[0]=='tyl']
     bis=Etrx()
     bia=Etrx()
     rndrwrsgmr=Etrx()
@@ -136,7 +141,10 @@ def bf(wr,sl,tl):
                 get_arrow_head(*bv,bia,4,False)
     return(bis,bia,rndrwrsgmr,vlenmax)
 
-def localbf(wr,sl,tl,x, y, z):
+def localbf(things,x, y, z):
+    wr = [i[1]for i in things if i[0]=='wire']
+    sl = [i[1]for i in things if i[0]=='sol']
+    tl = [i[1]for i in things if i[0]=='tyl']
     bis=Etrx()
     bia=Etrx()
     rndrwrsgmr=Etrx()
@@ -180,14 +188,13 @@ if __name__ == '__main__':
     rx=5
     m1 = False
 
-    wr=[[100,[0,0,-50],[0,0,50]]] #[current,start,end] '''[100,[0,0,-50],[0,0,50]]'''
-    sl=[[1,[0,-50,0],[0,50,0],5,50]] #[current,start,end,num_turns,radius]
-    tl=[]
-    UI = UserInterface(screen, localbf(wr,sl,tl,5, 5, 5), 5, 5, 5)
+    things=[['wire',[100,[0,0,-50],[0,0,50]]]] #[current,start,end] '''[100,[0,0,-50],[0,0,50]]'''
+
+    UI = UserInterface(screen, localbf(things,5, 5, 5), 5, 5, 5)
     textBoxes = UI.returnTextBoxes()
     dragging = False
     
-    bis,bia,rndrwrsgmr,vlenmax=bf(wr,sl,tl)
+    bis,bia,rndrwrsgmr,vlenmax=bf(things)
     screen.fill((0,0,0))
     render_axes(screen,axis,ry,rx)
     render_arrows(screen,axia,ry,rx)
@@ -221,12 +228,11 @@ if __name__ == '__main__':
                 clicked = False
                 new_thing=UI.click(*pygame.mouse.get_pos())
                 if new_thing!=None:
-                    if new_thing[0]=="wire":
-                        wr.append(new_thing[1])
-                    elif new_thing[0]=="sol":
-                        sl.append(new_thing[1])
-                        print(sl)
-                    bis,bia,rndrwrsgmr,vlenmax=bf(wr,sl,tl)
+                    if new_thing[0]in("wire","sol","tyl"):
+                        things.append(new_thing)
+                    elif new_thing[0]=="del" and len(things)>0:
+                        things.pop()
+                    bis,bia,rndrwrsgmr,vlenmax=bf(things)
                     screen.fill((0,0,0))
                     render_axes(screen,axis,ry,rx)
                     render_arrows(screen,axia,ry,rx)
